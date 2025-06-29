@@ -43,6 +43,7 @@ The latest release (v1.0.0) is available on the Releases page on "https://github
 3. Set the build configuration to Release and platform to x64.
 4. Build the solution (Build > Build Solution).
 
+
 **If you have issues running SMFL with visual studio, make sure these following steps are implemented when cloning or downloading files from the repository just incase the project is not finding SFML path's automatically:
 	
 Open the SMFL folder in the AutoTCAS main folder.
@@ -64,6 +65,7 @@ Under “Additional library directories” paste the path to the SMFL/lib folder
 Under linker -> input -> under additional dependencies type “sfml-graphics.lib;sfml-system.lib;sfml-window.lib;sfml-audio.lib”
 
 Make sure each .dll file ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") from SFML\bin are in the AutoTCAS folder which contains the .h and main.cpp files. These files can be copied from the SMFL bin folder. (This should already be implemented)
+
 
 5. If you wish to create your own .exe from from the project you will have to copy the SFML DLLs from SFML\bin ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") and the AutoTCAS\Fonts folder to the x64\release folder. You can then run the .exe file directly and/or compress it to a zip file with all those included files.
 
