@@ -1,7 +1,9 @@
 AutoTCAS Version v1.0.0
 -----------------------
 Class: Aerospace 424 - Pennsylvania State University
+
 Team Members: Nicholas Surotchak and Jadon Matriccino
+
 Built with Visual Studio 2022.
 
 
@@ -44,14 +46,23 @@ The latest release (v1.0.0) is available on the Releases page on "https://github
 **If you have issues running SMFL with visual studio, make sure these following steps are implemented when cloning or downloading files from the repository just incase the project is not finding SFML path's automatically:
 	
 Open the SMFL folder in the AutoTCAS main folder.
+
 Once you have the AutoTCAS project downloaded, open the project in visual studio. 
+
 With the main file open, click the project tab -> properties. 
+
 In properties expand the configuration properties and then expand the C/C++ properties. 
+
 Click on C/C++ language, and make sure the C++ Language Standard is set to "C++ 17". 
+
 Now go to C/C++ -> general -> “Additional include directories”, copy and paste the path to your SMFL/include folder. 
+
 Now expand the linker tab and select general. 
+
 Under “Additional library directories” paste the path to the SMFL/lib folder. 
+
 Under linker -> input -> under additional dependencies type “sfml-graphics.lib;sfml-system.lib;sfml-window.lib;sfml-audio.lib”
+
 Make sure each .dll file ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") from SFML\bin are in the AutoTCAS folder which contains the .h and main.cpp files. These files can be copied from the SMFL bin folder. (This should already be implemented)
 
 5. If you wish to create your own .exe from from the project you will have to copy the SFML DLLs from SFML\bin ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") and the AutoTCAS\Fonts folder to the x64\release folder. You can then run the .exe file directly and/or compress it to a zip file with all those included files.
