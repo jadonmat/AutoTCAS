@@ -38,7 +38,6 @@ The latest release (v1.0.0) is available on the Releases page on "https://github
 **For Those Building From Source Files**
 ----------------------------------------
 1. Clone the repository or download files from: https://github.com/jadonmat/AutoTCAS.git (You can directly clone in visual studio).
-(If you download the files
 2. Open the .sln file in Visual Studio 2022.
 3. Set the build configuration to Release and platform to x64.
 4. Build the solution (Build > Build Solution).
