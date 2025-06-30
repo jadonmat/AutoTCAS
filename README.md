@@ -17,6 +17,7 @@ AutoTCAS is a program developed in Visual Studio 2022 with the idea of simulatin
 **System Requirements**
 -----------------------
 Operation System: Windows 10 or later (**64-bit only**)
+
 Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
 
