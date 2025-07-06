@@ -20,6 +20,7 @@ public:
         float angleradians = angledegrees * (3.14159265 / 180);
         float speed = std::sqrt(getVelocity().x * getVelocity().x + getVelocity().y * getVelocity().y);
         velocity = sf::Vector2f(std::cos(angleradians), std::sin(angleradians)) * speed;
+        sf::Angle headingAngle = sf::degrees(std::atan2(getVelocity().y, getVelocity().x) * 180 / 3.14159265);
     }
 
 protected:

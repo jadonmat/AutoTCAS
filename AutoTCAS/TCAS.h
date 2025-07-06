@@ -7,7 +7,7 @@ class TCAS : public Radar {
 
 public:
 
-	TCAS() { range = 100.f; }
+	TCAS() { range = 75.f; }
 
 	float getRange() const {
 		return range;

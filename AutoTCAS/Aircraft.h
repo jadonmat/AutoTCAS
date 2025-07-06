@@ -54,7 +54,7 @@ public:
         plane.setPoint(30, sf::Vector2f(-4, 1.5));
         plane.setPoint(31, sf::Vector2f(-2, .75));
         //scale the size of the plane
-        plane.setScale(sf::Vector2f(0.5, 0.5)); //(0.5 = half size)
+        plane.setScale(sf::Vector2f(0.25, 0.25)); //(0.5 = half size)
         //set origin
         plane.setOrigin(plane.getGeometricCenter());
 
@@ -106,7 +106,7 @@ public:
                     float crossProduct = separation.x * relativePos.y - separation.y * relativePos.x;
                     float closingSpeed = relativeVelocity.x * separation.x + relativeVelocity.y * separation.y;
 
-                    float currentAngle = headingAngle.asDegrees();
+                    float currentAngle = getHeadingAngle().asDegrees();
                     float angleDiff = desiredAngleDegrees - currentAngle;
 
                     while (angleDiff > 180) {
@@ -115,9 +115,9 @@ public:
                     while (angleDiff < -180) {
                         angleDiff += 360;
                     }
-
-                    float smoothingFactor = 1.f; // Base turn speed
-                    float maxTurnRate = 5.0f; // Max degrees per second
+                    
+                    float smoothingFactor = 0.1f; // Base turn speed
+                    float maxTurnRate = 0.25f; // Max degrees per second
                     float angleChange = std::clamp(smoothingFactor * angleDiff * deltaTime,
                         -maxTurnRate * deltaTime, maxTurnRate * deltaTime);
                     float newAngle = currentAngle + angleChange; //calcualating new angle

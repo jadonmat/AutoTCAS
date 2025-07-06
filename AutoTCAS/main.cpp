@@ -96,7 +96,7 @@ int main() {
                     //prevents aircraft from being placed on each other
                     bool occupied = false;
                     for (const auto& aircraft : aircrafts) {
-                        if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 50) { // checks if the distance
+                        if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 40) { // checks if the distance
                             occupied = true;
                             break;
                         }

@@ -1,4 +1,4 @@
-AutoTCAS Version v1.0.0
+AutoTCAS Version V1.0.1
 -----------------------
 Class: Aerospace 424 - Pennsylvania State University
 
