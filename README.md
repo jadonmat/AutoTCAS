@@ -23,9 +23,9 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
 **General Installation**
 ------------------------
-The latest release (v1.0.0) is available on the Releases page on "https://github.com/jadonmat/AutoTCAS". 
+The latest release is available on the Releases page on "https://github.com/jadonmat/AutoTCAS". 
 
-1. Download the "AutoTCAS-v1.0.0.zip" file to get the executable.
+1. Download the "AutoTCAS-Version#.zip" file to get the executable.
 
 2. Install Visual C++ Redistributable for Visual Studio 2022 (64-bit) if not already installed from: "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170&wt.mc_id=studentamb_203301#latest-microsoft-visual-c-redistributable-version"
 
@@ -66,7 +66,7 @@ Under linker -> input -> under additional dependencies type “sfml-graphics.lib
 Make sure each .dll file ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") from SFML\bin are in the AutoTCAS folder which contains the .h and main.cpp files. These files can be copied from the SMFL bin folder. (This should already be implemented)
 
 
-5. If you wish to create your own .exe from from the project you will have to copy the SFML DLLs from SFML\bin ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") and the AutoTCAS\Fonts folder to the x64\release folder. You can then run the .exe file directly and/or compress it to a zip file with all those included files.
+5. If you wish to create your own .exe from from the project you will have to copy the SFML DLLs from SFML\bin ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") and the AutoTCAS\Fonts folder to your x64\release folder. You can then run the .exe file directly and/or compress it to a zip file with all those included files.
 
 
 
