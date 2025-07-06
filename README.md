@@ -1,6 +1,5 @@
-AutoTCAS Version V1.0.1
+AutoTCAS Version V1.1.0
 -----------------------
-Class: Aerospace 424 - Pennsylvania State University
 
 Team Members: Nicholas Surotchak and Jadon Matriccino
 

@@ -54,7 +54,7 @@ public:
         plane.setPoint(30, sf::Vector2f(-4, 1.5));
         plane.setPoint(31, sf::Vector2f(-2, .75));
         //scale the size of the plane
-        plane.setScale(sf::Vector2f(0.25, 0.25)); //(0.5 = half size)
+        plane.setScale(sf::Vector2f(0.26, 0.26)); //(0.5 = half size)
         //set origin
         plane.setOrigin(plane.getGeometricCenter());
 
@@ -73,58 +73,74 @@ public:
 
     void avoidCollision(const std::vector<Aircraft>& aircrafts, sf::Time dt) {
         float deltaTime = dt.asSeconds();
-        for (const auto& other : aircrafts) { //loop over aircraft vector using auto instead of nested fl
-            if (&other != this && detectAircraft(other)) { //ensures that the next aircraft is being compared
+        if (deltaTime <= 0.f) {
+            return; // Skip if deltaTime is invalid
+        }
+
+        // Find the closest aircraft
+        float minDistance = warningrange; // Initialize to maximum detection range
+        sf::Vector2f closestSeparation(0.f, 0.f);
+        bool found = false;
+
+        for (const auto& other : aircrafts) {
+            if (&other != this && DetectAircraft(other)) {
                 float distance = std::hypot(other.getPosition().x - position.x, other.getPosition().y - position.y);
-
-                if (distance > 0 && distance < range) {
-
-                    sf::Vector2f separation = position - other.getPosition();// determines direction the other plane should seperate
-
-                    float currentDistance = std::sqrt(separation.x * separation.x + separation.y * separation.y); //determines distance betwen planes
-
-                    if (currentDistance < 0.001f) {
-                        currentDistance = 0.001f;
-                    }
-                    //Normalize x and y distance
-                    separation.x /= currentDistance;
-                    separation.y /= currentDistance;
-
-
-                    float separationWeight = (range - distance) / range; //weighted seperation distance
-
-                    // Scale the separation vector -- tweak the multiplier to control force strength
-                    separation.x *= separationWeight;
-                    separation.y *= separationWeight;
-
-
-                    float desiredAngleRadians = std::atan2(separation.y, separation.x);//determines the heading angle
-                    float desiredAngleDegrees = desiredAngleRadians * (180.0f / 3.14f);
-
-                    sf::Vector2f relativePos = other.getPosition() - position;
-                    sf::Vector2f relativeVelocity = other.getVelocity() - getVelocity();
-                    float crossProduct = separation.x * relativePos.y - separation.y * relativePos.x;
-                    float closingSpeed = relativeVelocity.x * separation.x + relativeVelocity.y * separation.y;
-
-                    float currentAngle = getHeadingAngle().asDegrees();
-                    float angleDiff = desiredAngleDegrees - currentAngle;
-
-                    while (angleDiff > 180) {
-                        angleDiff -= 360; //Normalizes the angle difference to be between -180 and 180
-                    }
-                    while (angleDiff < -180) {
-                        angleDiff += 360;
-                    }
-                    
-                    float smoothingFactor = 0.1f; // Base turn speed
-                    float maxTurnRate = 0.25f; // Max degrees per second
-                    float angleChange = std::clamp(smoothingFactor * angleDiff * deltaTime,
-                        -maxTurnRate * deltaTime, maxTurnRate * deltaTime);
-                    float newAngle = currentAngle + angleChange; //calcualating new angle
-                    headingAngle = sf::degrees(newAngle);//updating heading angle
-                    setHeadingAngle(newAngle);
+                if (distance > 0 && distance < minDistance) {
+                    minDistance = distance;
+                    closestSeparation = position - other.getPosition();
+                    found = true;
                 }
             }
+        }
+
+        if (found) {
+            // Normalize the separation vector
+            float currentDistance = std::sqrt(closestSeparation.x * closestSeparation.x + closestSeparation.y * closestSeparation.y);
+            if (currentDistance < 0.001f) {
+                currentDistance = 0.001f;
+            }
+            if (std::abs(closestSeparation.x) < 0.001f && std::abs(closestSeparation.y) < 0.001f) {
+                return; // Skip if separation is effectively zero
+            }
+            closestSeparation.x /= currentDistance;
+            closestSeparation.y /= currentDistance;
+
+            // Apply separation weight based on proximity
+            float separationWeight = (warningrange - minDistance) / warningrange;
+            closestSeparation.x *= separationWeight;
+            closestSeparation.y *= separationWeight;
+
+            // Calculate desired heading
+            float desiredAngleRadians = std::atan2(closestSeparation.y, closestSeparation.x);
+            float desiredAngleDegrees = desiredAngleRadians * (180.0f / 3.14f); // Use M_PI for precision
+
+            // Use relative position and velocity for additional checks (if needed)
+            // 
+            //sf::Vector2f relativePos = -closestSeparation; // other.getPosition() - position
+            //sf::Vector2f relativeVelocity = other.getVelocity() - getVelocity();
+            //float crossProduct = closestSeparation.x * relativePos.y - closestSeparation.y * relativePos.x;
+            //float closingSpeed = relativeVelocity.x * closestSeparation.x + relativeVelocity.y * closestSeparation.y;
+
+            float currentAngle = getHeadingAngle().asDegrees();
+            float angleDiff = desiredAngleDegrees - currentAngle;
+
+            // Normalize angle difference
+            while (angleDiff > 180) {
+                angleDiff -= 360;
+            }
+            while (angleDiff < -180) {
+                angleDiff += 360;
+            }
+
+            // Apply smooth turning
+            float smoothingFactor = 0.015f; // Base turn speed
+            float maxTurnRate = 0.2f; // Max degrees per second
+            float angleChange = std::clamp(smoothingFactor * angleDiff * deltaTime,
+                -maxTurnRate * deltaTime, maxTurnRate * deltaTime);
+            float newAngle = currentAngle + angleChange;
+            headingAngle = sf::degrees(newAngle);
+            setHeadingAngle(newAngle);
+            //std::cout << "Turn rate: " << angleChange / deltaTime << " deg/s, angleDiff: " << angleDiff << std::endl;
         }
     }
 };

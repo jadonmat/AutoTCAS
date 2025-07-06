@@ -15,7 +15,7 @@ int main() {
     sf::VideoMode FullScreenMode = sf::VideoMode(CurrentDesktopMode.size);
 
     //sf::RenderWindow window(FullScreenMode, "AutoTCAS", sf::State::Fullscreen);
-    sf::RenderWindow window(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default); // Pass settings object
+    sf::RenderWindow window(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default);
     void start(); // starts time
     sf::Clock clock;
 
@@ -38,7 +38,8 @@ int main() {
     sf::Text text(font);
     text.setString("RESET");
     text.setCharacterSize(17);
-    text.setFillColor(sf::Color::Black);
+    //text.setFillColor(sf::Color::Black);
+    text.setFillColor(sf::Color::White);
 
     // Center the text within the rectangle
     text.setPosition(resetButton.getPosition() + sf::Vector2f(6, 15));
@@ -96,7 +97,7 @@ int main() {
                     //prevents aircraft from being placed on each other
                     bool occupied = false;
                     for (const auto& aircraft : aircrafts) {
-                        if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 40) { // checks if the distance
+                        if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 100) { // checks if the distance
                             occupied = true;
                             break;
                         }
@@ -127,37 +128,55 @@ int main() {
         }
 
         //MAIN LOOP CODE
-
         sf::Time dt = clock.restart();
         window.clear();
 
-
-
         for (int i = 0; i < aircrafts.size(); ++i) {
             aircrafts[i].update(dt);
-            bool collisionDetected = false;
-            // Boundary interactions
+
+            // Boundary interactions (Now integrated with aileron class)
             sf::Vector2f pos = aircrafts[i].getPosition();
             sf::Vector2f vel = aircrafts[i].getVelocity();
+            bool updated = false;
             if (pos.x > window.getSize().x) {
+                pos.x = window.getSize().x;
                 vel.x = -vel.x;
                 aircrafts[i].setVelocity(vel);
+                updated = true;
             }
             else if (pos.x < 0) {
+                pos.x = 0;
                 vel.x = -vel.x;
                 aircrafts[i].setVelocity(vel);
-
+                updated = true;
             }
             else if (pos.y < 0) {
+                pos.y = 0;
                 vel.y = -vel.y;
                 aircrafts[i].setVelocity(vel);
-
+                updated = true;
             }
             else if (pos.y > window.getSize().y) {
+                pos.y = window.getSize().y;
                 vel.y = -vel.y;
                 aircrafts[i].setVelocity(vel);
+                updated = true;
             }
-            //just in case out of bounds
+            //ensures pos and vel are updated
+            //aircrafts[i].setPosition(pos);
+            //aircrafts[i].setVelocity(vel);
+
+            if (updated) {
+                float speed = std::sqrt(vel.x * vel.x + vel.y * vel.y);
+                if (speed > 0.001f) { // Avoid updating heading for near-zero velocity
+                    float angleRadians = std::atan2(vel.y, vel.x);
+                    float angleDegrees = angleRadians * (180.0f / 3.14f);
+                    aircrafts[i].setHeadingAngle(angleDegrees);
+                }
+            }
+
+
+            //just in case out of bounds (deletion)
             else if (pos.x - aircrafts[i].getRange() > window.getSize().x) {
 
                 aircrafts.erase(aircrafts.begin() + i);
@@ -182,30 +201,41 @@ int main() {
                 aircraftShapes.erase(aircraftShapes.begin() + i);
                 cout << "Out of bounds Aircraft Deleted" << endl;
             }
+            
+            bool collisionDetected = false;
+            bool warningDetected = false;
 
-
+            // code related to TCAS detection (relates Aircraft and TCAS class)
             for (int j = 0; j < aircrafts.size(); ++j) {
-                if (i != j && aircrafts[i].detectAircraft(aircrafts[j])) {
-                    aircraftShapes[i].setFillColor(sf::Color::Red);
-                    aircraftShapes[j].setFillColor(sf::Color::Red);
+                if (i != j && aircrafts[i].DetectAircraft(aircrafts[j])) {
+                    warningDetected = true;
+                }   
+                if (i != j && aircrafts[i].DetectCollision(aircrafts[j])) {
                     collisionDetected = true;
-
+                }
+                if (collisionDetected) {
+                    aircraftShapes[i].setFillColor(sf::Color::Red);
+                }
+                else if (warningDetected) {
+                    aircraftShapes[i].setFillColor(sf::Color{255,150,0});
+                }
+                else {
+                    aircraftShapes[i].setFillColor(sf::Color::Green);
                 }
             }
-            if (!collisionDetected) {
-                aircraftShapes[i].setFillColor(sf::Color::Green);
-            }
-            aircraftShapes[i].setPosition(aircrafts[i].getPosition());
-            aircraftShapes[i].setRotation(aircrafts[i].getHeadingAngle() + sf::degrees(90));
-            window.draw(aircraftShapes[i]);
-
 
             for (auto& ac : aircrafts) {
                 ac.avoidCollision(aircrafts, dt);
             }
+
+            // constant determination of positions and headings
+            aircraftShapes[i].setPosition(aircrafts[i].getPosition());
+            aircraftShapes[i].setRotation(aircrafts[i].getHeadingAngle() + sf::degrees(90));
+            window.draw(aircraftShapes[i]);
+
         }
 
-        window.draw(resetButton);
+        //window.draw(resetButton);
         window.draw(text);
         window.display();
     }

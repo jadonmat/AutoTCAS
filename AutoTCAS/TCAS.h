@@ -7,19 +7,26 @@ class TCAS : public Radar {
 
 public:
 
-	TCAS() { range = 75.f; }
+	TCAS() { range = 65.f; warningrange = 85.f; }
 
 	float getRange() const {
 		return range;
 	}
 
-	virtual bool detectAircraft(const TCAS& otherAircraft) {
+	virtual bool DetectAircraft(const TCAS& otherAircraft) {
+		float distance = sqrt(pow(otherAircraft.getPosition().x - position.x, 2) +
+			pow(otherAircraft.getPosition().y - position.y, 2));
+		return distance < warningrange;
+	}
 
+	virtual bool DetectCollision(const TCAS& otherAircraft) {
 		float distance = sqrt(pow(otherAircraft.getPosition().x - position.x, 2) +
 			pow(otherAircraft.getPosition().y - position.y, 2));
 		return distance < range;
+
 	}
 
 protected:
 	float range;
+	float warningrange;
 };
