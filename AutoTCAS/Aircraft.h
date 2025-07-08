@@ -74,7 +74,7 @@ public:
     void avoidCollision(const std::vector<Aircraft>& aircrafts, sf::Time dt) {
         float deltaTime = dt.asSeconds();
         if (deltaTime <= 0.f) {
-            return; // Skip if deltaTime is invalid
+            return; // Skip if dt is invalid
         }
 
         // Find the closest aircraft
@@ -112,9 +112,9 @@ public:
 
             // Calculate desired heading
             float desiredAngleRadians = std::atan2(closestSeparation.y, closestSeparation.x);
-            float desiredAngleDegrees = desiredAngleRadians * (180.0f / 3.14f); // Use M_PI for precision
+            float desiredAngleDegrees = desiredAngleRadians * (180.0f / 3.14f);
 
-            // Use relative position and velocity for additional checks (if needed)
+            // relative position and velocity for additional checks
             // 
             //sf::Vector2f relativePos = -closestSeparation; // other.getPosition() - position
             //sf::Vector2f relativeVelocity = other.getVelocity() - getVelocity();
@@ -133,8 +133,8 @@ public:
             }
 
             // Apply smooth turning
-            float smoothingFactor = 0.015f; // Base turn speed
-            float maxTurnRate = 0.2f; // Max degrees per second
+            float smoothingFactor = 0.0125f; // Base turn speed
+            float maxTurnRate = 0.15f; // Max degrees per second
             float angleChange = std::clamp(smoothingFactor * angleDiff * deltaTime,
                 -maxTurnRate * deltaTime, maxTurnRate * deltaTime);
             float newAngle = currentAngle + angleChange;

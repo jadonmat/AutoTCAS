@@ -1,9 +1,6 @@
 #include <iostream>
 #include <vector>
 #include "Aircraft.h"
-//#include "TCAS.h"
-//#include "Aileron.h"
-//#include "Engine.h"
 //#include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -11,38 +8,51 @@ using namespace std;
 int main() {
     srand(time(0));
 
+    // Display the list of all the video modes available for fullscreen
+    /* std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
+    for (std::size_t i = 0; i < modes.size(); ++i)
+    {
+        sf::VideoMode mode = modes[i];
+        std::cout << "Mode #" << i << ": "
+            << mode.size.x << "x" << mode.size.y << " - "
+            << mode.bitsPerPixel << " bpp" << std::endl;
+    }
+    */
     sf::VideoMode CurrentDesktopMode = sf::VideoMode::getDesktopMode();
-    sf::VideoMode FullScreenMode = sf::VideoMode(CurrentDesktopMode.size);
-
+    sf::VideoMode ScreenSizeMode = sf::VideoMode(CurrentDesktopMode.size);
+    sf::ContextSettings settings;
+    settings.antiAliasingLevel = 8; // Try 2, 4, or 8 (higher = smoother, but more performance cost)
     //sf::RenderWindow window(FullScreenMode, "AutoTCAS", sf::State::Fullscreen);
-    sf::RenderWindow window(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default);
+    //sf::RenderWindow window(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default);
+    //sf::RenderWindow window(ScreenSizeMode, "AutoTCAS", sf::Style::Default);
+    sf::RenderWindow window(sf::VideoMode({ 1024, 768 }, CurrentDesktopMode.bitsPerPixel), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
+
+    // RESET BUTTON
+    float x = window.getSize().x;
+    float y = window.getSize().y;
+    sf::Font font("Fonts/Minecraftia-Regular.ttf");
+    sf::Text reset(font);
+    reset.setString("RESET");
+    reset.setCharacterSize(15);
+    reset.setFillColor(sf::Color::White);
+    float diffx = 65;
+    float diffy = 15;
+    reset.setPosition(sf::Vector2f(x-diffx,diffy));
+
+    //FPS display
+    sf::Text fpsText(font);
+    fpsText.setCharacterSize(11);
+    fpsText.setFillColor(sf::Color::White);
+    fpsText.setPosition(sf::Vector2f(10, 10));
+    float frameTime = 0.f;
+    int frameCount = 0;
+
+
     void start(); // starts time
     sf::Clock clock;
 
     vector<Aircraft> aircrafts; //initialize vector of aircrafts
     vector<sf::ConvexShape> aircraftShapes; //corresponding vector of aircraft shapes
-
-    // RESET BUTTON
-    float x = window.getSize().x;
-    float y = window.getSize().y;
-    sf::RectangleShape resetButton;
-
-    resetButton.setPosition(sf::Vector2f(x - 85, 0 + 10));
-    resetButton.setSize(sf::Vector2f(75, 30));
-    resetButton.setFillColor(sf::Color::White);
-    resetButton.setOutlineColor(sf::Color::White);
-    resetButton.setOutlineThickness(2.0f);
-
-    // Set up the button's text
-    sf::Font font("Fonts/Minecraftia-Regular.ttf");
-    sf::Text text(font);
-    text.setString("RESET");
-    text.setCharacterSize(17);
-    //text.setFillColor(sf::Color::Black);
-    text.setFillColor(sf::Color::White);
-
-    // Center the text within the rectangle
-    text.setPosition(resetButton.getPosition() + sf::Vector2f(6, 15));
 
     // MAIN LOOP
     while (window.isOpen()) {
@@ -70,6 +80,7 @@ int main() {
                 sf::FloatRect visibleArea({ 0.f, 0.f }, sf::Vector2f(resized->size));
                 window.setView(sf::View(visibleArea));
 
+                
                 // Clamp all aircraft positions to new window boundaries
                 sf::Vector2f windowSize(resized->size.x, resized->size.y);
                 for (int i = 0; i < aircrafts.size(); ++i) {
@@ -80,10 +91,9 @@ int main() {
                     aircrafts[i].setPosition(pos);
 
                 }
-                //CLAMP reset button to new window
-                sf::Vector2f first(85, 0);
-                resetButton.setPosition(sf::Vector2f(windowSize.x - first.x, 0 + 10));
-                text.setPosition(resetButton.getPosition() + sf::Vector2f(6, 15));
+                //CLAMP reset button to new window, bc on right side (unlike fps)
+                reset.setPosition(sf::Vector2f(windowSize.x - diffx, diffy));
+                //reset.setPosition(reset.getPosition() + sf::Vector2f(6, diffy));
             }
 
             // MOUSE CLICK EVENT
@@ -103,36 +113,49 @@ int main() {
                         }
                     }
                     if (!occupied) {
-                        std::cout << "the left button was pressed" << std::endl;
-                        std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
-                        std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
+                        //std::cout << "the left button was pressed" << std::endl;
+                        //std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
+                        //std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
 
                         Aircraft newAircraft;
                         newAircraft.setPosition(static_cast<sf::Vector2f>(mouseButtonPressed->position));
                         newAircraft.setHeadingAngle(rand() % 360);
                         aircrafts.push_back(newAircraft); //push_back adds a new element to the end of the vector
                         aircraftShapes.push_back(newAircraft.createAircraftShape());
-                        cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
+                        std::cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
                     }
 
                 }
                 // RESET BUTTON
-                if (resetButton.getGlobalBounds().contains(mousePos)) {
-                    std::cout << "the left button was pressed" << std::endl;
+                if (reset.getGlobalBounds().contains(mousePos)) {
+                    //std::cout << "the left button was pressed" << std::endl;
                     aircrafts.clear();
                     aircraftShapes.clear();
-                    cout << "Reset Button pressed" << endl;
-                    cout << "All Aircraft Deleted" << endl;
+                    std::cout << "Reset Button pressed" << endl;
+                    std::cout << "All Aircraft Deleted" << endl;
                 }
             }
-        }
+        } // END EVENT LOOPS
 
         //MAIN LOOP CODE
         sf::Time dt = clock.restart();
-        window.clear();
+        
+        //FPS display
+        frameTime += dt.asSeconds();
+        frameCount++;
+        if (frameTime >= 1.f) {
+            float fps = frameCount / frameTime;
+            fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
+            frameTime = 0.f;
+            frameCount = 0;
+        }
 
+        // Clear window each dt;
+        window.clear(sf::Color::Black);
+        
+        // For loop to iterate through aircrafts.
         for (int i = 0; i < aircrafts.size(); ++i) {
-            aircrafts[i].update(dt);
+            aircrafts[i].update(dt); // Updates the aircraft position
 
             // Boundary interactions (Now integrated with aileron class)
             sf::Vector2f pos = aircrafts[i].getPosition();
@@ -236,9 +259,13 @@ int main() {
         }
 
         //window.draw(resetButton);
-        window.draw(text);
+        window.draw(reset);
+        // Draw FPS text
+        window.draw(fpsText);
         window.display();
-    }
 
+        // END MAIN LOOP CODE
+    } 
+    // END MAIN
     return 0;
 }

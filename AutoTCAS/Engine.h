@@ -3,7 +3,7 @@
 
 class Engine {
 public:
-	Engine() : velocity(2, 2) {}
+	Engine() : velocity(1.5, 1.5) {}
 
 	void setVelocity(sf::Vector2f vel) {
 		velocity.x = vel.x;
