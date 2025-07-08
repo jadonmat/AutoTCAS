@@ -27,6 +27,9 @@ int main() {
     //sf::RenderWindow window(ScreenSizeMode, "AutoTCAS", sf::Style::Default);
     sf::RenderWindow window(sf::VideoMode({ 1024, 768 }, CurrentDesktopMode.bitsPerPixel), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
 
+    window.setFramerateLimit(60);
+
+
     // RESET BUTTON
     float x = window.getSize().x;
     float y = window.getSize().y;
@@ -107,7 +110,7 @@ int main() {
                     //prevents aircraft from being placed on each other
                     bool occupied = false;
                     for (const auto& aircraft : aircrafts) {
-                        if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 100) { // checks if the distance
+                        if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 135) { // checks if the distance
                             occupied = true;
                             break;
                         }

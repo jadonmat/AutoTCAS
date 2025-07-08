@@ -134,7 +134,7 @@ public:
 
             // Apply smooth turning
             float smoothingFactor = 0.0125f; // Base turn speed
-            float maxTurnRate = 0.15f; // Max degrees per second
+            float maxTurnRate = 0.125f; // Max degrees per second
             float angleChange = std::clamp(smoothingFactor * angleDiff * deltaTime,
                 -maxTurnRate * deltaTime, maxTurnRate * deltaTime);
             float newAngle = currentAngle + angleChange;
