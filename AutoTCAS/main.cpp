@@ -9,7 +9,7 @@ int main() {
     srand(time(0));
 
     // Display the list of all the video modes available for fullscreen
-    /* std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
+     std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
     for (std::size_t i = 0; i < modes.size(); ++i)
     {
         sf::VideoMode mode = modes[i];
@@ -17,12 +17,16 @@ int main() {
             << mode.size.x << "x" << mode.size.y << " - "
             << mode.bitsPerPixel << " bpp" << std::endl;
     }
-    */
+    
     sf::VideoMode CurrentDesktopMode = sf::VideoMode::getDesktopMode();
+    cout << "Current Desktop Mode: "
+         << CurrentDesktopMode.size.x << "x" << CurrentDesktopMode.size.y << " - "
+		<< CurrentDesktopMode.bitsPerPixel << " bpp" << std::endl;
     sf::VideoMode ScreenSizeMode = sf::VideoMode(CurrentDesktopMode.size);
     sf::ContextSettings settings;
+
     settings.antiAliasingLevel = 8; // Try 2, 4, or 8 (higher = smoother, but more performance cost)
-    //sf::RenderWindow window(FullScreenMode, "AutoTCAS", sf::State::Fullscreen);
+    //sf::RenderWindow window(ScreenSizeMode, "AutoTCAS", sf::State::Fullscreen);
     //sf::RenderWindow window(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default);
     //sf::RenderWindow window(ScreenSizeMode, "AutoTCAS", sf::Style::Default);
     sf::RenderWindow window(sf::VideoMode({ 1024, 768 }, CurrentDesktopMode.bitsPerPixel), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
