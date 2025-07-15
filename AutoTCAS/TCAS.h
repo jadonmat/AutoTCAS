@@ -13,15 +13,15 @@ public:
 		return range;
 	}
 
-	bool DetectAircraft(const TCAS& otherAircraft) {
-		float distance = sqrt(pow(otherAircraft.getPosition().x - position.x, 2) +
-			pow(otherAircraft.getPosition().y - position.y, 2));
+	bool DetectAircraft(const TCAS* otherAircraft) {
+		float distance = sqrt(pow(otherAircraft->getPosition().x - position.x, 2) +
+			pow(otherAircraft->getPosition().y - position.y, 2));
 		return distance < warningrange;
 	}
 
-	bool DetectCollision(const TCAS& otherAircraft) {
-		float distance = sqrt(pow(otherAircraft.getPosition().x - position.x, 2) +
-			pow(otherAircraft.getPosition().y - position.y, 2));
+	bool DetectCollision(const TCAS* otherAircraft) {
+		float distance = sqrt(pow(otherAircraft->getPosition().x - position.x, 2) +
+			pow(otherAircraft->getPosition().y - position.y, 2));
 		return distance < range;
 
 	}

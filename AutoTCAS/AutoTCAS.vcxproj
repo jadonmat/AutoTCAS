@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Aileron.h" />
     <ClInclude Include="Aircraft.h" />
+    <ClInclude Include="Airliner.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Radar.h" />
     <ClInclude Include="TCAS.h" />

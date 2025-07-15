@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "Aircraft.h"
+#include "Airliner.h"
 #include "AircraftShapeFunctions.cpp"
 //#include <SFML/Graphics.hpp>
 using namespace std;
@@ -65,7 +65,7 @@ using namespace std;
         void start(); // starts time
         sf::Clock clock;
 
-        vector<Aircraft> aircrafts; //initialize vector of aircrafts
+        vector<Aircraft*> aircrafts; //initialize vector of aircrafts
         vector<sf::ConvexShape> aircraftShapes; //corresponding vector of aircraft shapes
 
         // MAIN LOOP
@@ -100,7 +100,7 @@ using namespace std;
                             //prevents aircraft from being placed on each other
                             bool occupied = false;
                             for (const auto& aircraft : aircrafts) {
-                                if (std::hypot((aircraft.getPosition().x) - mousePos.x, aircraft.getPosition().y - mousePos.y) < 135) { // checks if the distance
+                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 135) { // checks if the distance
                                     occupied = true;
                                     break;
                                 }
@@ -109,12 +109,13 @@ using namespace std;
                                 //std::cout << "the left button was pressed" << std::endl;
                                 //std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
                                 //std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
-                                //for (int i = 0; i < aircrafts.size(); ++i) {
-                                Aircraft newAircraft;
-                                newAircraft.setPosition(static_cast<sf::Vector2f>(mouseButtonPressed->position));
-                                newAircraft.setHeadingAngle(rand() % 360);
+                                
+                                // FOR AIRLINER: (ONLY OPTION RN)
+                                Airliner* newAircraft = new Airliner();
+                                newAircraft->setPosition(static_cast<sf::Vector2f>(mouseButtonPressed->position));
+                                newAircraft->setHeadingAngle(rand() % 360);
                                 aircrafts.push_back(newAircraft); //push_back adds a new element to the end of the vector
-                                aircraftShapes.push_back(newAircraft.createAircraftShape(0));
+                                aircraftShapes.push_back(newAircraft->createAircraftShape(0));
                                 std::cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
                                 //}
                             }
@@ -141,11 +142,11 @@ using namespace std;
                         // Clamp all aircraft positions to new window boundaries
                         sf::Vector2f windowSize(resized->size.x, resized->size.y);
                         for (int i = 0; i < aircrafts.size(); ++i) {
-                            sf::Vector2f pos = aircrafts[i].getPosition();
+                            sf::Vector2f pos = aircrafts[i]->getPosition();
                             // Clamp x and y to keep aircraft within bounds
-                            pos.x = std::max(aircrafts[i].getRange(), std::min(pos.x, windowSize.x - aircrafts[i].getRange()));
-                            pos.y = std::max(aircrafts[i].getRange(), std::min(pos.y, windowSize.y - aircrafts[i].getRange()));
-                            aircrafts[i].setPosition(pos);
+                            pos.x = std::max(aircrafts[i]->getRange(), std::min(pos.x, windowSize.x - aircrafts[i]->getRange()));
+                            pos.y = std::max(aircrafts[i]->getRange(), std::min(pos.y, windowSize.y - aircrafts[i]->getRange()));
+                            aircrafts[i]->setPosition(pos);
 
                         }
                         //CLAMP reset button to new window, bc on right side (unlike fps)
@@ -174,7 +175,7 @@ using namespace std;
 
                 // For loop to iterate through aircrafts.
                 for (int i = 0; i < aircrafts.size(); ++i) {
-                    aircrafts[i].update(dt); // Updates the aircraft position
+                    aircrafts[i]->update(dt); // Updates the aircraft position
 
                     //SCALING BASED ON USER RESOLUTION: (IMPLEMENT INTO MENU LATER)
                     //cout << "Should Match:" << endl;
@@ -184,8 +185,8 @@ using namespace std;
                     //1440p case
                     if (CurrentDesktopMode.size.x == 2560 && CurrentDesktopMode.size.y == 1440) {
                         // After setting the scale
-                        aircrafts[i].setShapeScale(0.26);
-                        aircraftShapes[i] = aircrafts[i].createAircraftShape(aircrafts[i].getShapeScale());
+                        aircrafts[i]->setShapeScale(0.26);
+                        aircraftShapes[i] = aircrafts[i]->createAircraftShape(aircrafts[i]->getShapeScale());
                         //cout << "2560x1440" << endl;
                     }
                     else {
@@ -196,31 +197,31 @@ using namespace std;
 
 
                         // Boundary interactions (Now integrated with aileron class)
-                        sf::Vector2f pos = aircrafts[i].getPosition();
-                        sf::Vector2f vel = aircrafts[i].getVelocity();
+                        sf::Vector2f pos = aircrafts[i]->getPosition();
+                        sf::Vector2f vel = aircrafts[i]->getVelocity();
                         bool updated = false;
                         if (pos.x > window.getSize().x) {
                             pos.x = window.getSize().x;
                             vel.x = -vel.x;
-                            aircrafts[i].setVelocity(vel);
+                            aircrafts[i]->setVelocity(vel);
                             updated = true;
                         }
                         else if (pos.x < 0) {
                             pos.x = 0;
                             vel.x = -vel.x;
-                            aircrafts[i].setVelocity(vel);
+                            aircrafts[i]->setVelocity(vel);
                             updated = true;
                         }
                         else if (pos.y < 0) {
                             pos.y = 0;
                             vel.y = -vel.y;
-                            aircrafts[i].setVelocity(vel);
+                            aircrafts[i]->setVelocity(vel);
                             updated = true;
                         }
                         else if (pos.y > window.getSize().y) {
                             pos.y = window.getSize().y;
                             vel.y = -vel.y;
-                            aircrafts[i].setVelocity(vel);
+                            aircrafts[i]->setVelocity(vel);
                             updated = true;
                         }
                         //ensures pos and vel are updated
@@ -232,31 +233,31 @@ using namespace std;
                             if (speed > 0.001f) { // Avoid updating heading for near-zero velocity
                                 float angleRadians = std::atan2(vel.y, vel.x);
                                 float angleDegrees = angleRadians * (180.0f / 3.14f);
-                                aircrafts[i].setHeadingAngle(angleDegrees);
+                                aircrafts[i]->setHeadingAngle(angleDegrees);
                             }
                         }
 
 
                         //just in case out of bounds (deletion)
-                        else if (pos.x - aircrafts[i].getRange() > window.getSize().x) {
+                        else if (pos.x - aircrafts[i]->getRange() > window.getSize().x) {
 
                             aircrafts.erase(aircrafts.begin() + i);
                             aircraftShapes.erase(aircraftShapes.begin() + i);
                             cout << "Out of bounds Aircraft Deleted" << endl;
                         }
-                        else if (pos.x + aircrafts[i].getRange() < 0) {
+                        else if (pos.x + aircrafts[i]->getRange() < 0) {
 
                             aircrafts.erase(aircrafts.begin() + i);
                             aircraftShapes.erase(aircraftShapes.begin() + i);
                             cout << "Out of bounds Aircraft Deleted" << endl;
                         }
-                        else if (pos.y - aircrafts[i].getRange() > window.getSize().y) {
+                        else if (pos.y - aircrafts[i]->getRange() > window.getSize().y) {
 
                             aircrafts.erase(aircrafts.begin() + i);
                             aircraftShapes.erase(aircraftShapes.begin() + i);
                             cout << "Out of bounds Aircraft Deleted" << endl;
                         }
-                        else if (pos.y + aircrafts[i].getRange() < 0) {
+                        else if (pos.y + aircrafts[i]->getRange() < 0) {
 
                             aircrafts.erase(aircrafts.begin() + i);
                             aircraftShapes.erase(aircraftShapes.begin() + i);
@@ -268,10 +269,10 @@ using namespace std;
 
                             // code related to TCAS detection (relates Aircraft and TCAS class)
                             for (int j = 0; j < aircrafts.size(); ++j) {
-                                if (i != j && aircrafts[i].DetectAircraft(aircrafts[j])) {
+                                if (i != j && aircrafts[i]->DetectAircraft(aircrafts[j])) {
                                     warningDetected = true;
                                 }   
-                                if (i != j && aircrafts[i].DetectCollision(aircrafts[j])) {
+                                if (i != j && aircrafts[i]->DetectCollision(aircrafts[j])) {
                                     collisionDetected = true;
                                 }
                                 if (collisionDetected) {
@@ -286,12 +287,12 @@ using namespace std;
                             }
 
                             for (auto& ac : aircrafts) {
-                                ac.avoidCollision(aircrafts, dt);
+                                ac->avoidCollision(aircrafts, dt);
                             }
 
                     // constant determination of positions and headings
-                    aircraftShapes[i].setPosition(aircrafts[i].getPosition());
-                    aircraftShapes[i].setRotation(aircrafts[i].getHeadingAngle() + sf::degrees(90));
+                    aircraftShapes[i].setPosition(aircrafts[i]->getPosition());
+                    aircraftShapes[i].setRotation(aircrafts[i]->getHeadingAngle() + sf::degrees(90));
                     window.draw(aircraftShapes[i]);
 
                 }
