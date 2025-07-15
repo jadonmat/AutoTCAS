@@ -1,4 +1,4 @@
-AutoTCAS Version V1.1.3
+AutoTCAS Version V1.1.4
 -----------------------
 
 Team Members: Nicholas Surotchak and Jadon Matriccino
