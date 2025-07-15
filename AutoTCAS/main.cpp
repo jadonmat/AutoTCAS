@@ -43,20 +43,21 @@ using namespace std;
                 // RESET BUTTON
                 float x = window.getSize().x;
                 float y = window.getSize().y;
-                sf::Font font("Fonts/Minecraftia-Regular.ttf");
+                //sf::Font font("Fonts/Minecraftia-Regular.ttf");
+                sf::Font font("Fonts/Edges.ttf");
                 sf::Text reset(font);
                 reset.setString("RESET");
                 reset.setCharacterSize(15);
                 reset.setFillColor(sf::Color::White);
-                float diffx = 65;
-                float diffy = 15;
+                float diffx = 55;
+                float diffy = 5;
                 reset.setPosition(sf::Vector2f(x-diffx,diffy));
 
                 //FPS display
                 sf::Text fpsText(font);
-                fpsText.setCharacterSize(11);
-                fpsText.setFillColor(sf::Color::White);
-                fpsText.setPosition(sf::Vector2f(10, 10));
+                fpsText.setCharacterSize(15);
+                fpsText.setFillColor(sf::Color::Green);
+                fpsText.setPosition(sf::Vector2f(10, 5));
                 float frameTime = 0.f;
                 int frameCount = 0;
 
