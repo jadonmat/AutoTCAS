@@ -5,6 +5,7 @@ class Airliner : public Aircraft {
 public:
 	Airliner() {}
 
+    //Airliner Shape
     virtual sf::ConvexShape createAircraftShape(float scale) {
         sf::ConvexShape plane;
         plane.setPointCount(32);
