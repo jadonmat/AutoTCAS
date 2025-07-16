@@ -15,21 +15,25 @@ public:
     ~Aircraft() {}//deconstructor
 
     // Define default shape
-   virtual sf::ConvexShape createAircraftShape(float scale) {
-        sf::ConvexShape plane;
-        plane.setPointCount(32);
+   virtual std::vector<sf::ConvexShape> createAircraftShape(float scale) {
+       std::vector<sf::ConvexShape> shapes;
+       sf::ConvexShape plane;
+        plane.setPointCount(2);
    
         plane.setPoint(0, sf::Vector2f(0, 0));
+		plane.setPoint(1, sf::Vector2f(10, 20));
 
         //scale the size of the plane
-        plane.setScale(sf::Vector2f(scale, scale)); //(0.5 = half size)
+        plane.setScale(sf::Vector2f(scale, scale));
+
         //set origin
         plane.setOrigin(plane.getGeometricCenter());
 
         //Setting color
         plane.setFillColor(sf::Color::Green);
 
-        return plane;
+		shapes.push_back(plane);
+        return shapes;
     }
 
     //Getter and setters for ShapeScaling
@@ -110,7 +114,7 @@ public:
 
                 // Apply smooth turning
                 float smoothingFactor = 0.0125f; // Base turn speed
-                float maxTurnRate = 0.135f; // Max degrees per second
+                float maxTurnRate = 0.075f; // Max degrees per second
                 float angleChange = std::clamp(smoothingFactor * angleDiff * deltaTime,
                     -maxTurnRate * deltaTime, maxTurnRate * deltaTime);
                 float newAngle = currentAngle + angleChange;

@@ -42,7 +42,7 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
 
         sf::RenderWindow window(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
         //sf::RenderWindow window(ScreenSizeMode, "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
-        //window.setPosition(sf::Vector2i(-12.5, 0));
+        //window.setPosition(sf::Vector2i(-8, 0));
 
         window.setFramerateLimit(60);
 
@@ -54,13 +54,16 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                 float y = window.getSize().y;
                 //sf::Font font("Fonts/Minecraftia-Regular.ttf");
                 sf::Font font("Fonts/Edges.ttf");
+                //sf::Font font("Fonts/39335_UniversCondensed.ttf");
+                //sf::Font font("Fonts/07723_Cgothicb0.ttf");
+                sf::Font font2("Fonts/Pixellari.ttf");
                 sf::Text reset(font);
                 reset.setString("RESET");
                 TextUpdate(reset, window, font, TextType::Setting); // Default character size (based on resolution)
                 //reset.setFillColor(sf::Color::White);
 
                 //FPS display
-                sf::Text fpsText(font);
+                sf::Text fpsText(font2);
                 TextUpdate(fpsText, window, font, TextType::FPS); // Default character size (based on resolution)
                 //fpsText.setFillColor(sf::Color::Green);
                 //fpsText.setPosition(sf::Vector2f(10.f, 5.f));
@@ -72,7 +75,7 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
         sf::Clock clock;
 
         vector<Aircraft*> aircrafts; //initialize vector of aircrafts
-        vector<sf::ConvexShape> aircraftShapes; //corresponding vector of aircraft shapes
+		vector<std::vector<sf::ConvexShape>> aircraftShapes; // each aircraft has a vector of shapes (deals with multiple shapes for aircrafts)
 
         // MAIN LOOP
         while (window.isOpen()) {
@@ -106,7 +109,7 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                             //prevents aircraft from being placed on each other
                             bool occupied = false;
                             for (const auto& aircraft : aircrafts) {
-                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 250) { // checks if the distance
+                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 180) { // checks if the distance
                                     occupied = true;
                                     break;
                                 }
@@ -121,7 +124,7 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                                 newAircraft->setPosition(static_cast<sf::Vector2f>(mouseButtonPressed->position));
                                 newAircraft->setHeadingAngle(rand() % 360);
                                 aircrafts.push_back(newAircraft); //push_back adds a new element to the end of the vector
-                                aircraftShapes.push_back(newAircraft->createAircraftShape(0.26f)); // Default for 1440p
+                                aircraftShapes.push_back(newAircraft->createAircraftShape(0.2f)); // Default for 1440p
                                 std::cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
                                 //}
                             }
@@ -290,14 +293,16 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                                 if (i != j && aircrafts[i]->DetectCollision(aircrafts[j])) {
                                     collisionDetected = true;
                                 }
-                                if (collisionDetected) {
-                                    aircraftShapes[i].setFillColor(sf::Color::Red);
-                                }
-                                else if (warningDetected) {
-                                    aircraftShapes[i].setFillColor(sf::Color{255,150,0});
-                                }
-                                else {
-                                    aircraftShapes[i].setFillColor(sf::Color::Green);
+                                for (auto& shape : aircraftShapes[i]) {
+                                    if (collisionDetected) {
+                                        shape.setFillColor(sf::Color::Red);
+                                    }
+                                    else if (warningDetected) {
+                                        shape.setFillColor(sf::Color{ 255,150,0 });
+                                    }
+                                    else {
+                                        shape.setFillColor(sf::Color::Green);
+                                    }
                                 }
                             }
 
@@ -306,9 +311,11 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                             }
 
                     // constant determination of positions and headings
-                    aircraftShapes[i].setPosition(aircrafts[i]->getPosition());
-                    aircraftShapes[i].setRotation(aircrafts[i]->getHeadingAngle() + sf::degrees(90));
-                    window.draw(aircraftShapes[i]);
+                    for (auto& shape : aircraftShapes[i]) {
+                        shape.setPosition(aircrafts[i]->getPosition());
+                        shape.setRotation(aircrafts[i]->getHeadingAngle() + sf::degrees(90));
+                        window.draw(shape);
+                    }
 
                 }
 
@@ -329,26 +336,30 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
 
 void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextType type) {
     unsigned int CharacterSize = 0;
+	unsigned int CharacterSizeFPS = 0;
     sf::VideoMode CurrentDesktopMode = sf::VideoMode::getDesktopMode();
 	//720p case
     if (CurrentDesktopMode.size.x == 1280 && CurrentDesktopMode.size.y == 720) {
         CharacterSize = 20.0f;
+        CharacterSizeFPS = 10.0f;
         //cout << "1280x720" << endl;
     }
     //1080p case
     else if (CurrentDesktopMode.size.x == 1920 && CurrentDesktopMode.size.y == 1080) {
         CharacterSize = 25.f;
+		CharacterSizeFPS = 12.5f;
         //cout << "1920x1080" << endl;
 	}
     //1440p case
     else if (CurrentDesktopMode.size.x == 2560 && CurrentDesktopMode.size.y == 1440) {
         CharacterSize = 30.0f;
+		CharacterSizeFPS = 15.0f;
         //cout << "2560x1440" << endl;
     }
     // 3.5k to 4k case
     else if (CurrentDesktopMode.size.x >= 3456 && CurrentDesktopMode.size.x <= 3840 && CurrentDesktopMode.size.y == 2160) {
         CharacterSize = 45.0f;
-
+		CharacterSizeFPS = 22.5f;
         //cout << "3456x1440" << endl;
        
     }
@@ -416,11 +427,8 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
     }
     else if (type == TextType::FPS) {
         text.setFillColor(sf::Color::Green);
-        text.setCharacterSize(CharacterSize);
+        text.setCharacterSize(CharacterSizeFPS);
         text.setPosition(sf::Vector2f(10.f, 5.f));
 	}
 
 }
-
-
-
