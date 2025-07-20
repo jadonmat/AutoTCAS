@@ -109,7 +109,7 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                             //prevents aircraft from being placed on each other
                             bool occupied = false;
                             for (const auto& aircraft : aircrafts) {
-                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 100) { // checks if the distance
+                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 180) { // checks if the distance
                                     occupied = true;
                                     break;
                                 }
