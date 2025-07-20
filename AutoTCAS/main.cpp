@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <Windows.h>
 #include <vector>
-#include "Airliner.h"
+#include "A380.h"
 //#include <SFML/Graphics.hpp>
 using namespace std;
 #undef max
@@ -109,7 +109,7 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                             //prevents aircraft from being placed on each other
                             bool occupied = false;
                             for (const auto& aircraft : aircrafts) {
-                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 180) { // checks if the distance
+                                if (std::hypot((aircraft->getPosition().x) - mousePos.x, aircraft->getPosition().y - mousePos.y) < 100) { // checks if the distance
                                     occupied = true;
                                     break;
                                 }
@@ -119,12 +119,12 @@ void TextUpdate(sf::Text& text, sf::RenderWindow& window, sf::Font font, TextTyp
                                 //std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
                                 //std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
                                 
-                                // FOR AIRLINER: (ONLY OPTION RN)
-                                Airliner* newAircraft = new Airliner();
+                                // FOR A380: (ONLY OPTION RN)
+                                A380* newAircraft = new A380();
                                 newAircraft->setPosition(static_cast<sf::Vector2f>(mouseButtonPressed->position));
                                 newAircraft->setHeadingAngle(rand() % 360);
                                 aircrafts.push_back(newAircraft); //push_back adds a new element to the end of the vector
-                                aircraftShapes.push_back(newAircraft->createAircraftShape(0.2f)); // Default for 1440p
+                                aircraftShapes.push_back(newAircraft->createA380Shape(.175f)); // Default for 1440p
                                 std::cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
                                 //}
                             }

@@ -35,7 +35,7 @@
     <ClInclude Include="Radar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Airliner.h">
+    <ClInclude Include="A380.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
