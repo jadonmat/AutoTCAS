@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2B-lightgrey.svg)
 ![Architecture](https://img.shields.io/badge/architecture-x64-green.svg)
 ![Language](https://img.shields.io/badge/C%2B%2B-17-00599C.svg?logo=c%2B%2B)
-![SFML](https://img.shields.io/badge/SFML-3.0-8CC445.svg)
+![SFML](https://img.shields.io/badge/SFML-3.0.0-8CC445.svg)
 ![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
 
 *A real-time aircraft collision avoidance system simulation built with modern C++ and SFML*
@@ -105,6 +105,18 @@ If you encounter linking issues:
 - **Events** - Input handling (mouse, keyboard, interactions)  
 - **Boundary** - Boundary management
 - **Window** - Display and rendering management
+- 
+## 🚀 Roadmap (Subject to change)
+
+- **v1.2.0** - Basic settings menu, intro Screen, spawn too close notification.
+- **v1.3.0** - TCAS audio, right click to delete aircraft, help menu.
+- **v1.4.0** - Zoom and move ability with new predefined larger map (circular boundary). No longer will have a boundary based on window bounds. Max # of aircraft.
+- **v1.5.0** - Animated ailerons, aircraft collisions
+- **v1.6.0** - New types of aircraft, aircraft names.
+- **v1.7.0** - Overhauled intro screen, overhauled UI system. LIkely to implement a UI library.
+- **v1.8.0** - Predictive avoidance handling with speed changes, engine animations.
+- **v1.9.0** - Ability to select aircraft starting heading.
+- **v2.0.0** - To be determined
 
 ## 🤝 Contributing
 
