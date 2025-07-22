@@ -135,15 +135,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="A380.cpp" />
+    <ClCompile Include="Aileron.cpp" />
+    <ClCompile Include="Aircraft.cpp" />
+    <ClCompile Include="Boundary.cpp" />
+    <ClCompile Include="Events.cpp" />
+    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Radar.cpp" />
+    <ClCompile Include="TCAS.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aileron.h" />
     <ClInclude Include="Aircraft.h" />
     <ClInclude Include="A380.h" />
+    <ClInclude Include="Boundary.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Events.h" />
     <ClInclude Include="Radar.h" />
     <ClInclude Include="TCAS.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,17 +3,11 @@
 
 class Radar : public Aileron {
 public:
+    Radar();
 
+    sf::Vector2f getPosition() const;
 
-
-    sf::Vector2f getPosition() const {
-        return position;
-    }
-
-    void setPosition(sf::Vector2f pos) {
-        position.x = pos.x;
-        position.y = pos.y;
-    }
+    void setPosition(sf::Vector2f pos);
 
 
 protected:

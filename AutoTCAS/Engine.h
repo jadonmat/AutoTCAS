@@ -3,16 +3,11 @@
 
 class Engine {
 public:
-	Engine() : velocity(1, 1) {}
+	Engine();
 
-	void setVelocity(sf::Vector2f vel) {
-		velocity.x = vel.x;
-		velocity.y = vel.y;
-	}
+	void setVelocity(sf::Vector2f vel);
 
-	sf::Vector2f getVelocity() const {
-		return velocity;
-	}
+	sf::Vector2f getVelocity() const;
 
 
 protected:
