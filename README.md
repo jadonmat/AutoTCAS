@@ -11,11 +11,9 @@
 
 *A real-time aircraft collision avoidance system simulation built with modern C++ and SFML*
 
-[🚀 Download Latest Release](https://github.com/jadonmat/AutoTCAS/releases)
+## [🚀 Download Latest Release](https://github.com/jadonmat/AutoTCAS/releases)
 
 </div>
-
----
 
 
 Project Description
@@ -125,7 +123,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Aviation Industry** - For the real-world TCAS systems that inspired this simulation
 ---
 <div align="center">
-[⭐ Star this repo](https://github.com/jadonmat/AutoTCAS)
-[🐛 Report Bug](https://github.com/jadonmat/AutoTCAS/issues)
-[💡 Request Feature](https://github.com/jadonmat/AutoTCAS/issues)
+  
+## [⭐ Star this repo](https://github.com/jadonmat/AutoTCAS)
+  
+## [🐛 Report Bug](https://github.com/jadonmat/AutoTCAS/issues)
+
+## [💡 Request Feature](https://github.com/jadonmat/AutoTCAS/issues)
 
