@@ -1,6 +1,21 @@
-# AutoTCAS Version V1.1.6
+<div align="center">
 
-Built with Visual Studio 2022 and Simple and Fast Multimedia Library (SFML).
+# ✈️ AutoTCAS - Traffic Collision Avoidance System Simulator
+
+![Version](https://img.shields.io/badge/version-1.1.6-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2B-lightgrey.svg)
+![Architecture](https://img.shields.io/badge/architecture-x64-green.svg)
+![Language](https://img.shields.io/badge/C%2B%2B-17-00599C.svg?logo=c%2B%2B)
+![SFML](https://img.shields.io/badge/SFML-3.0-8CC445.svg)
+![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
+
+*A real-time aircraft collision avoidance system simulation built with modern C++ and SFML*
+
+[🚀 Download Latest Release](https://github.com/jadonmat/AutoTCAS/releases)
+
+</div>
+
+---
 
 
 Project Description
@@ -17,18 +32,15 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
 
 
-**General Installation**
-------------------------
-The latest release is available on the Releases page on "https://github.com/jadonmat/AutoTCAS". 
+**Installation**
+----------------
 
-1. Download the "AutoTCAS-Version#.zip" file to get the executable.
+1. **Download** the latest release from the [releases page](https://github.com/jadonmat/AutoTCAS/releases)
+2. **Install** [Visual C++ Redistributable 2022 (x64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+3. **Extract** the ZIP file to your desired location
+4. **Run** `AutoTCAS.exe` and start simulating!
 
-2. Install Visual C++ Redistributable for Visual Studio 2022 (64-bit) if not already installed from: "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170&wt.mc_id=studentamb_203301#latest-microsoft-visual-c-redistributable-version"
-
-3. Extract the .zip file to a folder (e.g., C:\Users\YourName\AutoTCAS). Ensure all DLLs and data files (if any) remain in the same folder as AutoTCAS.exe.
-
-4. Double-click AutoTCAS.exe to run the application. Note: This is a 64-bit application and will not run on 32-bit Windows systems.
-
+> ⚠️ **Note**: Keep all DLL files in the same directory as the executable
 
 **Known Issues**
 ----------------
@@ -43,28 +55,35 @@ If the user's desktop resolution is not one of the ones manually defined in the 
 3. Set the build configuration to Release and platform to x64.
 4. Build the solution (Build > Build Solution).
 
+### 🔧 SFML Configuration
 
-**If you have issues running SMFL with visual studio, make sure these following steps are implemented when cloning or downloading files from the repository just incase the project is not finding SFML path's automatically:
-	
-Open the SMFL folder in the AutoTCAS main folder.
+If you encounter linking issues:
 
-Once you have the AutoTCAS project downloaded, open the project in visual studio. 
+<details>
+<summary>Click to expand SFML setup instructions</summary>
 
-With the main file open, click the project tab -> properties. 
+1. Open the SMFL folder in the AutoTCAS main folder.
 
-In properties expand the configuration properties and then expand the C/C++ properties. 
+2. Once you have the AutoTCAS project downloaded, open the project in visual studio. 
 
-Click on C/C++ language, and make sure the C++ Language Standard is set to "C++ 17". 
+3. With the main file open, click the project tab -> properties. 
 
-Now go to C/C++ -> general -> “Additional include directories”, copy and paste the path to your SMFL/include folder. 
+4. In properties expand the configuration properties and then expand the C/C++ properties. 
 
-Now expand the linker tab and select general. 
+5. Click on C/C++ language, and make sure the C++ Language Standard is set to "C++ 17". 
 
-Under “Additional library directories” paste the path to the SMFL/lib folder. 
+6. Now go to C/C++ -> general -> “Additional include directories”, copy and paste the path to your SMFL/include folder. 
 
-Under linker -> input -> under additional dependencies type “sfml-graphics.lib;sfml-system.lib;sfml-window.lib;sfml-audio.lib”
+7. Now expand the linker tab and select general. 
 
-Make sure each .dll file ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") from SFML\bin are in the AutoTCAS folder which contains the .h and main.cpp files. These files can be copied from the SMFL bin folder. (This should already be implemented)
+8. Under “Additional library directories” paste the path to the SMFL/lib folder. 
+
+9. Under linker -> input -> under additional dependencies type “sfml-graphics.lib;sfml-system.lib;sfml-window.lib;sfml-audio.lib”
+
+> ⚠️ **Note**: Make sure each .dll file ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") from SFML\bin are in the AutoTCAS folder which contains the .h and main.cpp files. These files can be copied from the SMFL bin folder. (This should already be implemented)
+
+
+</details>
 
 
 5. If you wish to create your own .exe from from the project you will have to copy the SFML DLLs from SFML\bin ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-window-3.dll", and "sfml-audio-3.dll") and the AutoTCAS\Fonts folder to your x64\release folder. You can then run the .exe file directly and/or compress it to a zip file with all those included files.
@@ -84,9 +103,27 @@ Make sure each .dll file ("sfml-audio-3.dll", "sfml-graphics-3.dll", "sfml-windo
 
 ### Independent Classes
 
-- 🖥️ **UI** - User interface management (fonts, FPS, buttons)
-- 🎮 **Events** - Input handling (mouse, keyboard, interactions)  
-- 🚧 **Boundary** - Boundary management
-- 🪟 **Window** - Display and rendering management
+- **UI** - User interface management (fonts, FPS, buttons)
+- **Events** - Input handling (mouse, keyboard, interactions)  
+- **Boundary** - Boundary management
+- **Window** - Display and rendering management
 
-     
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
+
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## 🙏 Acknowledgments
+
+- **Penn State AERSP 424** - Course that inspired this project
+- **SFML Community** - For the excellent multimedia library
+- **Aviation Industry** - For the real-world TCAS systems that inspired this simulation
+---
+<div align="center">
+[⭐ Star this repo](https://github.com/jadonmat/AutoTCAS) • [🐛 Report Bug](https://github.com/jadonmat/AutoTCAS/issues) • [💡 Request Feature](https://github.com/jadonmat/AutoTCAS/issues)
+
