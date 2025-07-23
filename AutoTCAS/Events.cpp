@@ -53,11 +53,15 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                     aircraftShapes.push_back(newAircraft->createAircraftShape(0.175f)); // Default for 1440p
                     std::cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
 
+                
                     // Hide the message after first aircraft is created
                     if (ui.showClickMessage) {
                         ui.showClickMessage = false;
                     }
                 }
+                else if (occupied) {
+                    ui.showTooCloseMessageFor(2.0f); // Show message for ... seconds
+				}
 
             }
             // RESET BUTTON
@@ -93,6 +97,5 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
         }
 
     } // END EVENT LOOPS
-
 
 }

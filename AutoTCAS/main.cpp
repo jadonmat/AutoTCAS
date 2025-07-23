@@ -17,7 +17,7 @@ using namespace std;
     int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow) {
         srand(static_cast<unsigned int>(time(0)));
 
-        //WINDOW GENERATION (window Class)
+        //WINDOW GENERATION (my window class, not sfml)
 		Window window;
 		window.WindowGeneration(60, 16, 0); // Frame rate, antialiasing level, and state (0 for windowed, 1 for fullscreen)
 
@@ -69,6 +69,7 @@ using namespace std;
 
             }
 
+	        
 			ui.DrawAndOrAnimate(window.window, dt, ui); // Draws and animates UI elements
 
 			window.window.display(); //Displays all the drawn shapes and text
