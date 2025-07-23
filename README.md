@@ -2,12 +2,12 @@
 
 # ✈️ AutoTCAS - Traffic Collision Avoidance System Simulator
 
-![Release Version](https://img.shields.io/badge/version-1.1.6-blue.svg)
-![Platform](https://img.shields.io/badge/platform-Windows%2010%2B-lightgrey.svg)
-![Architecture](https://img.shields.io/badge/architecture-x64-green.svg)
+![Release Version](https://img.shields.io/badge/Release_Version-1.1.6-blue.svg)
+![Platform](https://img.shields.io/badge/Platform-Windows%2010%2B-lightgrey.svg)
+![Architecture](https://img.shields.io/badge/Architecture-x64-green.svg)
 ![Language](https://img.shields.io/badge/C%2B%2B-17-00599C.svg?logo=c%2B%2B)
 ![SFML](https://img.shields.io/badge/SFML-3.0.0-8CC445.svg)
-![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
+![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)
 
 *A real-time aircraft collision avoidance system simulation built with modern C++ and SFML*
 
