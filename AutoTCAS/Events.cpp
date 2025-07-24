@@ -60,7 +60,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                     }
                 }
                 else if (occupied) {
-                    ui.showTooCloseMessageFor(2.0f); // Show message for ... seconds
+                    ui.showTooCloseMessageFor(2.0f, mousePos); // Show message for 2 seconds at mouse position
 				}
 
             }

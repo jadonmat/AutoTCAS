@@ -1,4 +1,4 @@
-//Seperate class, not related to the aircraft inherentence structure.
+        //Seperate class, not related to the aircraft inherentence structure.
 #include <iostream>
 #include <vector>
 #include "UI.h"
@@ -7,19 +7,16 @@ using namespace std;
 UI::UI() {
     //edges = getedgesFont();
     //sf::Text reset{ edges };
-	frameTime = 0.0f;
+    frameTime = 0.0f;
     frameCount = 0.0f;
-	visibleChars = 0;
-	charInterval = 0.1f; // seconds between each character
-	charTimer = 0.0f;
-	showClickMessage = true;
-	dotInterval = 0.5f; // seconds per dot update
-	dotTimer = 0.0f;
-	dotCount = 0; // will range from 0 to 3
+    visibleChars = 0;
+    charInterval = 0.1f; // seconds between each character
+    charTimer = 0.0f;
+    showClickMessage = true;
+    dotInterval = 0.5f; // seconds per dot update
+    dotTimer = 0.0f;
+    dotCount = 0; // will range from 0 to 3
     fullClickMessage = "Click anywhere to begin";
-    showTooCloseMessage = false;
-    tooCloseTimer = 0.0f;
-    tooCloseDisplayDuration = 2.0f; // Show for 2 seconds
 }
 
 sf::Font UI::getedgesFont() const {
@@ -60,15 +57,17 @@ sf::Text& UI::getTooCloseMessage() {
     return TooClose;
 }
 
-// Add this method after the other getter methods
-void UI::showTooCloseMessageFor(float duration) {
-    showTooCloseMessage = true;
-    tooCloseTimer = 0.0f;
-    tooCloseDisplayDuration = duration;
+
+void UI::showTooCloseMessageFor(float duration, sf::Vector2f position) {
+    sf::Text newTooCloseText{ edges };
+    tooCloseTexts.push_back(newTooCloseText);
+    tooCloseTimers.push_back(0.0f);
+    tooCloseDurations.push_back(duration);
+    tooClosePositions.push_back(position);
 }
 
 // handles differnet buttons with texttype
-void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) const {
+void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
     sf::Font font = getedgesFont();
     float CharacterSize = 0.0f;
     float CharacterSizeFPS = 0.0f;
@@ -178,7 +177,7 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) con
     else if (type == TextType::TooClose) {
         text.setString("TOO CLOSE");
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize- 30.0f));
+        text.setCharacterSize(static_cast<unsigned int>(CharacterSize- 21.5f));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
         text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
@@ -209,12 +208,17 @@ void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
 }
 
 void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
-    // Handle Too Close message timing
-    if (showTooCloseMessage) {
-        tooCloseTimer += dt.asSeconds();
-        if (tooCloseTimer >= tooCloseDisplayDuration) {
-            showTooCloseMessage = false;
-            tooCloseTimer = 0.0f;
+    // update all active messages using vectors
+    for (size_t i = 0; i < tooCloseTimers.size();) {
+        tooCloseTimers[i] += dt.asSeconds();
+        if (tooCloseTimers[i] >= tooCloseDurations[i]) {
+            // Remove expired message by erasing from all four vectors
+            tooCloseTexts.erase(tooCloseTexts.begin() + static_cast<ptrdiff_t>(i));
+            tooCloseTimers.erase(tooCloseTimers.begin() + static_cast<ptrdiff_t>(i));
+            tooCloseDurations.erase(tooCloseDurations.begin() + static_cast<ptrdiff_t>(i));
+            tooClosePositions.erase(tooClosePositions.begin() + static_cast<ptrdiff_t>(i));
+        } else {
+            ++i;
         }
     }
 
@@ -264,15 +268,17 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         window.draw(ui.reset);
         window.draw(ui.fpsText);
     }
+   
     
-    // Draw Too Close message if active
-    if (showTooCloseMessage) {
-        ui.TextUpdate(ui.TooClose, window, TextType::TooClose);
-
-        // Optional: Add a semi-transparent red overlay for emphasis
-        sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
-        overlay.setFillColor(sf::Color(255, 0, 0, 64)); // Red with low alpha
-        window.draw(overlay);
-        window.draw(ui.TooClose);
+    for (size_t i = 0; i < tooCloseTexts.size(); ++i) {
+        ui.TextUpdate(tooCloseTexts[i], window, TextType::TooClose);
+        sf::FloatRect bounds = tooCloseTexts[i].getLocalBounds();
+        sf::Vector2f center = bounds.getCenter();
+        tooCloseTexts[i].setPosition(sf::Vector2f(
+            tooClosePositions[i].x - center.x, 
+            tooClosePositions[i].y - center.y
+        ));
+        
+        window.draw(tooCloseTexts[i]);
     }
 }

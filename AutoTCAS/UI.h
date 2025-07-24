@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
 //#include "Aircraft.h"
 using namespace std;
 
@@ -21,14 +22,14 @@ public:
 
     //Too close message
     sf::Text& getTooCloseMessage();
-    void showTooCloseMessageFor(float duration = 2.0f); // Add this line
+    void showTooCloseMessageFor(float duration = 2.0f, sf::Vector2f position = sf::Vector2f(0, 0)); // Modified to accept position
 
     //Click text
     sf::Text& getClickText();
 
     //Update UI scaling and generate text shapes based on user resolution  
     enum class TextType { Reset, FPS, Click, TooClose };
-    void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) const;
+    void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type);
 
     //Initialize UI elements
     void InitializeUI(sf::RenderWindow& window, UI& ui);
@@ -39,7 +40,6 @@ public:
     //////////////////////////////////////////////////////////////
     //Public member variable (need to be accessed in main)
     bool showClickMessage;
-    bool showTooCloseMessage;
     sf::Font edges = getedgesFont();
     sf::Text reset{ edges };
     sf::Font pixellari = getpixellariFont();
@@ -63,8 +63,10 @@ private:
     float dotInterval;
     float dotTimer;
     int dotCount;
-
-    // Too Close message timing variables
-    float tooCloseTimer;
-    float tooCloseDisplayDuration;
+    
+    // Vector-based too close messages (without structs)
+    std::vector<sf::Text> tooCloseTexts;
+    std::vector<float> tooCloseTimers;
+    std::vector<float> tooCloseDurations;
+    std::vector<sf::Vector2f> tooClosePositions;
 };
