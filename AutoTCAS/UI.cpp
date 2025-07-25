@@ -37,18 +37,6 @@ sf::Text& UI::getFPSDisplay() {
     return fpsText; 
 }
 
-void UI::FPSDisplay(sf::Time dt, sf::Text& fpsText) {
-    //FPS display
-    frameTime += dt.asSeconds();
-    frameCount++;
-    if (frameTime >= 1.0f) {
-        float fps = frameCount / frameTime;
-        fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
-        frameTime = 0.0f;
-        frameCount = 0.0f;
-    }
-}
-
 sf::Text& UI::getClickText() {
     return clickText; 
 }
@@ -71,31 +59,35 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
     sf::Font font = getedgesFont();
     float CharacterSize = 0.0f;
     float CharacterSizeFPS = 0.0f;
+	float TooCloseCharacterSize = 0.0f;
     sf::VideoMode CurrentDesktopMode = sf::VideoMode::getDesktopMode();
     //720p case
     if (CurrentDesktopMode.size.x == 1280u && CurrentDesktopMode.size.y == 720u) {
         CharacterSize = 20.0f;
         CharacterSizeFPS = 10.0f;
+        TooCloseCharacterSize = 8.0f;
         //cout << "1280x720" << endl;
     }
     //1080p case
     else if (CurrentDesktopMode.size.x == 1920u && CurrentDesktopMode.size.y == 1080u) {
         CharacterSize = 25.0f;
         CharacterSizeFPS = 12.5f;
+		TooCloseCharacterSize = 8.0f;
         //cout << "1920x1080" << endl;
     }
     //1440p case
     else if (CurrentDesktopMode.size.x == 2560u && CurrentDesktopMode.size.y == 1440u) {
         CharacterSize = 30.0f;
         CharacterSizeFPS = 15.0f;
+		TooCloseCharacterSize = 10.0f;
         //cout << "2560x1440" << endl;
     }
     // 3.5k to 4k case
     else if (CurrentDesktopMode.size.x >= 3456u && CurrentDesktopMode.size.x <= 3840u && CurrentDesktopMode.size.y == 2160u) {
-        CharacterSize = 50.0f;
+        CharacterSize = 45.0f;
         CharacterSizeFPS = 27.5f;
+        TooCloseCharacterSize = 11.0f;
         //cout << "3456x1440" << endl;
-
     }
     // 4k
     else {
@@ -177,7 +169,7 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
     else if (type == TextType::TooClose) {
         text.setString("TOO CLOSE");
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize- 21.5f));
+        text.setCharacterSize(static_cast<unsigned int>(TooCloseCharacterSize));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
         text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
@@ -208,18 +200,14 @@ void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
 }
 
 void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
-    // update all active messages using vectors
-    for (size_t i = 0; i < tooCloseTimers.size();) {
-        tooCloseTimers[i] += dt.asSeconds();
-        if (tooCloseTimers[i] >= tooCloseDurations[i]) {
-            // Remove expired message by erasing from all four vectors
-            tooCloseTexts.erase(tooCloseTexts.begin() + static_cast<ptrdiff_t>(i));
-            tooCloseTimers.erase(tooCloseTimers.begin() + static_cast<ptrdiff_t>(i));
-            tooCloseDurations.erase(tooCloseDurations.begin() + static_cast<ptrdiff_t>(i));
-            tooClosePositions.erase(tooClosePositions.begin() + static_cast<ptrdiff_t>(i));
-        } else {
-            ++i;
-        }
+    //FPS display
+    frameTime += dt.asSeconds();
+    frameCount++;
+    if (frameTime >= 1.0f) {
+        float fps = frameCount / frameTime;
+        fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
+        frameTime = 0.0f;
+        frameCount = 0.0f;
     }
 
     // animate click message
@@ -252,7 +240,7 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         clickText.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
         clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
 
-        // Optional: draw a semi-transparent overlay.
+        // draw a semi-transparent overlay.
         sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
         overlay.setFillColor(sf::Color(0, 0, 0, 128));
         window.draw(overlay);
@@ -262,22 +250,32 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
 
     if (!ui.showClickMessage) {
 		ui.TextUpdate(ui.reset, window, TextType::Reset);
-		ui.FPSDisplay(dt, ui.fpsText);
 		ui.TextUpdate(ui.fpsText, window, TextType::FPS);
 
         window.draw(ui.reset);
         window.draw(ui.fpsText);
     }
    
-    
+    // update all active tooclosetexts using vectors
+    for (size_t i = 0; i < tooCloseTimers.size();) {
+        tooCloseTimers[i] += dt.asSeconds();
+        if (tooCloseTimers[i] >= tooCloseDurations[i]) {
+            // Remove expired message by erasing from all four vectors
+            tooCloseTexts.erase(tooCloseTexts.begin() + static_cast<ptrdiff_t>(i));
+            tooCloseTimers.erase(tooCloseTimers.begin() + static_cast<ptrdiff_t>(i));
+            tooCloseDurations.erase(tooCloseDurations.begin() + static_cast<ptrdiff_t>(i));
+            tooClosePositions.erase(tooClosePositions.begin() + static_cast<ptrdiff_t>(i));
+        }
+        else {
+            ++i;
+        }
+    }
+
     for (size_t i = 0; i < tooCloseTexts.size(); ++i) {
         ui.TextUpdate(tooCloseTexts[i], window, TextType::TooClose);
         sf::FloatRect bounds = tooCloseTexts[i].getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        tooCloseTexts[i].setPosition(sf::Vector2f(
-            tooClosePositions[i].x - center.x, 
-            tooClosePositions[i].y - center.y
-        ));
+        tooCloseTexts[i].setPosition(sf::Vector2f(tooClosePositions[i].x - center.x, tooClosePositions[i].y - center.y));
         
         window.draw(tooCloseTexts[i]);
     }

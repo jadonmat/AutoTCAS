@@ -44,9 +44,6 @@ using namespace std;
         //MAIN LOOP CODE
             sf::Time dt = clock.restart();
 
-            //FPS display (UI class)
-			ui.FPSDisplay(dt, ui.fpsText);
-
             // Clear window each dt;
             window.window.clear(sf::Color::Black);
 

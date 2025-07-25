@@ -18,7 +18,6 @@ public:
 
     //FPS
     sf::Text& getFPSDisplay();
-    void FPSDisplay(sf::Time dt, sf::Text& fpsText);
 
     //Too close message
     sf::Text& getTooCloseMessage();
