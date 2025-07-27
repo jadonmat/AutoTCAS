@@ -19,12 +19,11 @@ public:
     //FPS
     sf::Text& getFPSDisplay();
 
-    //Too close message
-    sf::Text& getTooCloseMessage();
-    void showTooCloseMessageFor(float duration = 2.0f, sf::Vector2f position = sf::Vector2f(0, 0)); // Modified to accept position
-
     //Click text
     sf::Text& getClickText();
+
+    //Too close message
+    sf::Text& getTooCloseMessage();
 
     //Update UI scaling and generate text shapes based on user resolution  
     enum class TextType { Reset, FPS, Click, TooClose };
@@ -37,7 +36,7 @@ public:
     void DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui);
 
     //////////////////////////////////////////////////////////////
-    //Public member variable (need to be accessed in main)
+	//Public member variables (need to be accessed in main) (may want to make these private later and make getters)
     bool showClickMessage;
     sf::Font edges = getedgesFont();
     sf::Text reset{ edges };
@@ -45,6 +44,12 @@ public:
     sf::Text fpsText{ pixellari };
     sf::Text clickText{ edges };
     sf::Text TooClose{ edges };
+    // Vector-based too close messages (without structs)
+    std::vector<sf::Text> tooCloseTexts;
+    std::vector<float> tooCloseTimers;
+    std::vector<float> tooCloseDurations;
+    std::vector<sf::Vector2f> tooClosePositions;
+
 private:
     //Private member variables
 
@@ -62,10 +67,4 @@ private:
     float dotInterval;
     float dotTimer;
     int dotCount;
-    
-    // Vector-based too close messages (without structs)
-    std::vector<sf::Text> tooCloseTexts;
-    std::vector<float> tooCloseTimers;
-    std::vector<float> tooCloseDurations;
-    std::vector<sf::Vector2f> tooClosePositions;
 };

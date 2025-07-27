@@ -19,6 +19,7 @@ UI::UI() {
     fullClickMessage = "Click anywhere to begin";
 }
 
+
 sf::Font UI::getedgesFont() const {
     sf::Font edgesFont("Fonts/Edges.ttf");
     return edgesFont;
@@ -45,14 +46,6 @@ sf::Text& UI::getTooCloseMessage() {
     return TooClose;
 }
 
-
-void UI::showTooCloseMessageFor(float duration, sf::Vector2f position) {
-    sf::Text newTooCloseText{ edges };
-    tooCloseTexts.push_back(newTooCloseText);
-    tooCloseTimers.push_back(0.0f);
-    tooCloseDurations.push_back(duration);
-    tooClosePositions.push_back(position);
-}
 
 // handles differnet buttons with texttype
 void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
@@ -179,6 +172,8 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
 	}
 }
 
+
+
 void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
     // Settings BUTTON
 
@@ -199,7 +194,16 @@ void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
 	ui.TextUpdate(tooCloseText, window, UI::TextType::TooClose);
 }
 
+
+
 void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
+    // Reset Button
+    if (!ui.showClickMessage) {
+        ui.TextUpdate(ui.reset, window, TextType::Reset);
+
+        window.draw(ui.reset);
+    }
+
     //FPS display
     frameTime += dt.asSeconds();
     frameCount++;
@@ -209,8 +213,13 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         frameTime = 0.0f;
         frameCount = 0.0f;
     }
+    if (!ui.showClickMessage) {
+        ui.TextUpdate(ui.fpsText, window, TextType::FPS);
+        window.draw(ui.fpsText);
+    }
 
-    // animate click message
+
+	//CLICK MESSAGE
     if (showClickMessage) {
         charTimer += dt.asSeconds();
         if (visibleChars < fullClickMessage.size() && charTimer >= charInterval) {
@@ -246,16 +255,9 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         window.draw(overlay);
         window.draw(clickText);
     }
-
-
-    if (!ui.showClickMessage) {
-		ui.TextUpdate(ui.reset, window, TextType::Reset);
-		ui.TextUpdate(ui.fpsText, window, TextType::FPS);
-
-        window.draw(ui.reset);
-        window.draw(ui.fpsText);
-    }
    
+
+    //TOO CLOSE MESSAGES
     // update all active tooclosetexts using vectors
     for (size_t i = 0; i < tooCloseTimers.size();) {
         tooCloseTimers[i] += dt.asSeconds();
