@@ -105,10 +105,10 @@ If you encounter linking issues:
 - **Events** - Input handling (mouse, keyboard, interactions)  
 - **Boundary** - Boundary management
 - **Window** - Display and rendering management
-- 
+  
 ## 🚀 Roadmap (Subject to change)
 
-- **v1.2.0** - Basic settings menu, intro Screen, spawn too close notification.
+- **v1.2.0** - Basic settings menu, start Screen, spawn too close notification.
 - **v1.3.0** - TCAS audio, right click to delete aircraft, help menu.
 - **v1.4.0** - Zoom and move ability with new predefined larger map (circular boundary). No longer will have a boundary based on window bounds. Max # of aircraft.
 - **v1.5.0** - Animated ailerons, aircraft collisions
