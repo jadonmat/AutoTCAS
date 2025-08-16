@@ -38,7 +38,7 @@ using namespace std;
 
         Events Events;
 		// Handle events in event class
-		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui,  ui.clickText, ui.fpsText, ui.reset);
+		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui,  ui.clickText, ui.fpsText, ui.reset, ui.settingsText);
 
 
         //MAIN LOOP CODE

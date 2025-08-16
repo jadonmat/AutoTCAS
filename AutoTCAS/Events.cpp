@@ -4,8 +4,8 @@ using namespace std;
 
 Events::Events() {}
 
-void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts, 
-	std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& clickText, sf::Text& fpsText, sf::Text& reset) {
+void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& clickText, sf::Text& fpsText, sf::Text& reset, sf::Text& settings) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -40,7 +40,13 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                         break;
                     }
                 }
-                if (!occupied) {
+                // Check if click is on UI buttons (settings or reset)
+                bool clickedOnUI = false;
+                if (reset.getGlobalBounds().contains(mousePos) || settings.getGlobalBounds().contains(mousePos)) {
+                    clickedOnUI = true;
+                }
+
+                if (!occupied && !clickedOnUI) {
                     //std::cout << "the left button was pressed" << std::endl;
                     //std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
                     //std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
@@ -59,11 +65,11 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                         ui.showClickMessage = false;
                     }
                 }
-                else if (occupied) {
+                else if (occupied && !clickedOnUI) {
                     sf::Text newTooCloseText{ ui.edges };
                     ui.tooCloseTexts.push_back(newTooCloseText);
                     ui.tooCloseTimers.push_back(0.0f);
-                    ui.tooCloseDurations.push_back(1.5f);
+                    ui.tooCloseDurations.push_back(1.0f);
                     ui.tooClosePositions.push_back(mousePos);
 				}
 

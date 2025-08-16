@@ -30,6 +30,14 @@ sf::Font UI::getpixellariFont() const {
 	return pixellariFont;
 }
 
+sf::Text& UI::getSettingsText() {
+    return settingsText;
+}
+
+
+
+
+
 sf::Text& UI::getResetButton() {
     return reset; 
 }
@@ -144,8 +152,16 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
         text.setCharacterSize(static_cast<unsigned int>(CharacterSize));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f));
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 45.0f));
     }
+    else if(type == TextType::Settings) {
+        text.setString("SETTINGS");
+        text.setFillColor(sf::Color::White);
+        text.setCharacterSize(static_cast<unsigned int>(CharacterSize));
+        sf::FloatRect bounds = text.getLocalBounds();
+        sf::Vector2f center = bounds.getCenter();
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f));
+	}
     else if (type == TextType::FPS) {
         text.setFillColor(sf::Color::Green);
         text.setCharacterSize(static_cast<unsigned int>(CharacterSizeFPS));
@@ -175,7 +191,12 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
 
 
 void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
-    // Settings BUTTON
+    //SETTINGS BUTTON (make shape later)
+    sf::Text settings = ui.getSettingsText();
+	ui.TextUpdate(settings, window, UI::TextType::Settings);
+    //SETTINGS SHAPE
+	sf::RectangleShape settingsButton;
+    //SETTINGS internal buttons
 
     // Reset BUTTON 
     sf::Text reset = ui.getResetButton();
@@ -197,10 +218,15 @@ void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
 
 
 void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
+	//Settings Button
+    if(!ui.showClickMessage) {
+        ui.TextUpdate(ui.settingsText, window, TextType::Settings);
+        window.draw(ui.settingsText);
+	}
+    
     // Reset Button
     if (!ui.showClickMessage) {
         ui.TextUpdate(ui.reset, window, TextType::Reset);
-
         window.draw(ui.reset);
     }
 
