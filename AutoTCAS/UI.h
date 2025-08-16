@@ -28,12 +28,14 @@ public:
 
     //Click text
     sf::Text& getClickText();
+    //Name text
+	sf::Text& getNameText();
 
     //Too close message
     sf::Text& getTooCloseMessage();
 
     //Update UI scaling and generate text shapes based on user resolution  
-    enum class TextType { Reset, FPS, Click, TooClose, Settings };
+    enum class TextType { Reset, FPS, Click, TooClose, Settings, name };
     void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type);
 
     //Initialize UI elements
@@ -50,6 +52,7 @@ public:
     sf::Text reset{ edges };
     sf::Font pixellari = getpixellariFont();
     sf::Text fpsText{ pixellari };
+	sf::Text nameText{ edges };
     sf::Text clickText{ edges };
     sf::Text TooClose{ edges };
 

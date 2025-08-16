@@ -59,7 +59,7 @@ using namespace std;
 
 				// Avoid collision, change color, and draw aircrafts (Aircraft Class)
 				float smoothingFactor = 0.05f; // Smoothing factor for position updates
-				float maxTurnrate = 0.075f; // Maximum turn rate in degrees per second
+				float maxTurnrate = 0.135f; // Maximum turn rate in degrees per second
                 for (auto& ac : aircrafts) {
                     ac->avoidCollision(static_cast<int>(i), window.window, aircrafts, aircraftShapes, dt, smoothingFactor, maxTurnrate);
                 }

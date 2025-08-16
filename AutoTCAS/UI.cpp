@@ -50,6 +50,10 @@ sf::Text& UI::getClickText() {
     return clickText; 
 }
 
+sf::Text& UI::getNameText() {
+    return nameText; 
+}
+
 sf::Text& UI::getTooCloseMessage() {
     return TooClose;
 }
@@ -170,10 +174,19 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
     else if (type == TextType::Click) {
         text.setString("Click");
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 20.f));
+        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.f));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
+        text.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
+    }
+    else if (type == TextType::name) {
+        text.setString("Welcome to AutoTCAS");
+        text.setFillColor(sf::Color::White);
+        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 50.f));
+        sf::FloatRect bounds = text.getLocalBounds();
+        sf::Vector2f center = bounds.getCenter();
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - 200.0f ));
     }
     else if (type == TextType::TooClose) {
         text.setString("TOO CLOSE");
@@ -209,10 +222,15 @@ void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
     // Clicktext display
     sf::Text clickText = ui.getClickText();
     ui.TextUpdate(clickText, window, UI::TextType::Click);
+	// nameText display
+	sf::Text nameText = ui.getNameText();
+	ui.TextUpdate(nameText, window, UI::TextType::name);
 
     //Too close display
 	sf::Text tooCloseText = ui.getClickText();
 	ui.TextUpdate(tooCloseText, window, UI::TextType::TooClose);
+
+
 }
 
 
@@ -273,13 +291,20 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         clickText.setString(displayText);
         // Always set origin from the local bounds to keep it centered.
         clickText.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
-        clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
+        //clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
+
+
+		ui.TextUpdate(ui.nameText, window, UI::TextType::name);
 
         // draw a semi-transparent overlay.
         sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
         overlay.setFillColor(sf::Color(0, 0, 0, 128));
+        
+        
+        
         window.draw(overlay);
         window.draw(clickText);
+		window.draw(nameText);
     }
    
 
