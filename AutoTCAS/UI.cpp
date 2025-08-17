@@ -88,26 +88,30 @@ sf::Text& UI::getTooCloseMessage() {
 
 
 // handles differnet buttons with texttype
-void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
+void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) const {
     sf::Font font = getedgesFont();
     
-    // Get current window size instead of desktop mode
+    // Get current window size
     sf::Vector2u windowSize = window.getSize();
     
     // Calculate scaling factors based on window size
     // Using 1440p as the base reference resolution
     float scaleX = static_cast<float>(windowSize.x) / 2560.0f;
     float scaleY = static_cast<float>(windowSize.y) / 1440.0f;
-    float scale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+    float rawScale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
     
-    // Base character sizes (for 1920x1080)
+    // Clamp scale to minimum and maximum values
+    float scale = std::clamp(rawScale, MIN_SCALE, MAX_SCALE);
+    float scale_fps = std::clamp(rawScale, MIN_SCALE, MAX_SCALE_FPS);
+    
+    // Base character sizes
     float baseCharacterSize = 50.0f;
     float baseFPSSize = 30.0f;
     float baseTooCloseSize = 8.0f;
     
     // Calculate scaled sizes
     float CharacterSize = baseCharacterSize * scale;
-    float CharacterSizeFPS = baseFPSSize * scale;
+    float CharacterSizeFPS = baseFPSSize * scale_fps;
     float TooCloseCharacterSize = baseTooCloseSize; //* scale;
     
     float resetdiff = 10.0f * scale; // Scale the offset too
@@ -190,21 +194,52 @@ void UI::InitializeTextUI(sf::RenderWindow& window, UI& ui) {
 }
 
 void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
+    // Get current window size
+    sf::Vector2u windowSize = window.getSize();
+
+    // Calculate scaling factors based on window size
+    // Using 1440p as the base reference resolution (matching TextUpdate)
+    float scaleX = static_cast<float>(windowSize.x) / 2560.0f;
+    float scaleY = static_cast<float>(windowSize.y) / 1440.0f;
+    float rawScale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+    
+    // Clamp scale to minimum and maximum values
+    float scale = std::clamp(rawScale, MIN_SCALE, MAX_SCALE);
+
+    // Base sizes for scaling
+    float baseMenuWidth = 1500.0f;
+    float baseMenuHeight = 500.0f;
+    float baseSpacing = 60.0f;
+    float baseLargeSpacing = 100.0f;
+    float baseHeaderOffset = 80.0f;
+    float baseMargin = 120.0f;
+    float baseFontSize = 100.0f;
+    float baseSmallFontSize = 30.0f;
+
     //SETTINGS SHAPE
     sf::RectangleShape& settings = ui.getSettings();
-    settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().y) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
-    settings.setFillColor(sf::Color(50, 50, 50, 150));
+    settings.setSize(sf::Vector2f(
+        static_cast<float>(window.getSize().x) - baseMenuWidth * scale, 
+        static_cast<float>(window.getSize().y) - baseMenuHeight * scale
+    ));
+    settings.setFillColor(sf::Color(50, 50, 50, 100));
     settings.setOutlineColor(sf::Color::White);
-    settings.setOutlineThickness(0.5f);
+    settings.setOutlineThickness(0.5f * scale);
     sf::Vector2f center = settings.getGeometricCenter();
-    settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f));
+    settings.setPosition(sf::Vector2f(
+        static_cast<float>(window.getSize().x) / 2.0f - center.x, 
+        static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f * scale
+    ));
     window.draw(settings);
     
     // Exit Button (fixed position - doesn't scroll)
     sf::RectangleShape& exitButton = ui.getExitButton();
     exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.075f, settings.getSize().y * 0.075f));
     exitButton.setFillColor(sf::Color(200, 0, 0));
-    exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f, settings.getGlobalBounds().position.y + 5.0f));
+    exitButton.setPosition(sf::Vector2f(
+        settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f * scale, 
+        settings.getGlobalBounds().position.y + 5.0f * scale
+    ));
     window.draw(exitButton);
     
     // Exit Text (fixed position)
@@ -214,14 +249,17 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.9f));
     const sf::FloatRect tb = exitText.getLocalBounds();
     exitText.setOrigin(tb.position + tb.size / 2.0f);
-    exitText.setPosition(sf::Vector2f(exitButton.getPosition().x + exitButton.getSize().x * 0.5f, exitButton.getPosition().y + exitButton.getSize().y * 0.5f));
+    exitText.setPosition(sf::Vector2f(
+        exitButton.getPosition().x + exitButton.getSize().x * 0.5f, 
+        exitButton.getPosition().y + exitButton.getSize().y * 0.5f
+    ));
     window.draw(exitText);
 
     // Pause Text (fixed position)
     sf::Text& pauseText = ui.getPauseText();
     pauseText.setString("**PAUSED**");
     pauseText.setFillColor(sf::Color::White);
-    pauseText.setCharacterSize(50u);
+    pauseText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale));
     const sf::FloatRect ptb = pauseText.getLocalBounds();
     pauseText.setOrigin(ptb.position + ptb.size / 2.0f);
     const float settingsTop = settings.getGlobalBounds().position.y;
@@ -230,20 +268,32 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     pauseText.setPosition(sf::Vector2f(midX, midY));
     window.draw(pauseText);
 
-
     // SCROLLABLE CONTENT
-    float contentAreaTop = exitButton.getGlobalBounds().position.y + 80.0f; // Leave space for header
-    float contentAreaHeight = settings.getGlobalBounds().size.y - 120.0f; // Leave space for header/footer
+    float contentAreaTop = exitButton.getGlobalBounds().position.y + baseHeaderOffset * scale; // Scale header offset
+    float contentAreaHeight = settings.getGlobalBounds().size.y - baseMargin * scale; // Scale margin
     float startingContentY = contentAreaTop;
     
+    // Calculate total content height first (without drawing) - scale all spacing
+    float tempCurrentY = contentAreaTop;
+    tempCurrentY += baseSpacing * scale; // Window Settings Text height
+    tempCurrentY += baseLargeSpacing * scale; // Window Mode Text height
+    tempCurrentY += 10 * baseSpacing * scale; // Test options height
     
+    float totalContentHeight = tempCurrentY - startingContentY;
+    maxScrollOffset = std::max(0.0f, totalContentHeight - contentAreaHeight);
+
+    // Clamp scroll offset BEFORE calculating positions
+    float minScrollOffset = 0.0f;
+    scrollOffset = std::max(minScrollOffset, std::min(scrollOffset, maxScrollOffset));
+    
+    // Now calculate positions with clamped scroll offset
     float currentY = contentAreaTop - scrollOffset;
     
     //Window Settings Text (scrollable)
     sf::Text& windowSettingsText = ui.getWindowSettingsText();
     windowSettingsText.setString("Window Settings (INOP)");
     windowSettingsText.setFillColor(sf::Color::White);
-    windowSettingsText.setCharacterSize(static_cast<unsigned int>(settings.getSize().y * 0.05f));
+    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.5f)); // Scale font size
     const sf::FloatRect wstb = windowSettingsText.getLocalBounds();
     windowSettingsText.setOrigin(wstb.position + wstb.size / 2.0f);
     windowSettingsText.setPosition(sf::Vector2f(midX, currentY));
@@ -251,13 +301,13 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
         window.draw(windowSettingsText);
     }
-    currentY += 60.0f; // Space between elements
+    currentY += baseSpacing * scale; // Scale spacing between elements
     
     // WINDOW MODE TEXT (scrollable)
     sf::Text& windowModeText = ui.getWindowModeText();
     windowModeText.setString("Current Window Mode: ");
     windowModeText.setFillColor(sf::Color::White);
-    windowModeText.setCharacterSize(static_cast<unsigned int>(settings.getSize().y * 0.05f - 10.0f));
+    windowModeText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale)); // Scale font size
     const sf::FloatRect wmtb = windowModeText.getLocalBounds();
     windowModeText.setOrigin(wmtb.position + wmtb.size / 2.0f);
     windowModeText.setPosition(sf::Vector2f(midX, currentY));
@@ -266,15 +316,14 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
         window.draw(windowModeText);
     }
-    currentY += 100.0f; // Space between elements
+    currentY += baseLargeSpacing * scale; // Scale spacing between elements
 
-    
     // Add more content to test scrolling
     for (int i = 0; i < 10; ++i) {
         sf::Text testText{ ui.edges };
         testText.setString("Test Option " + std::to_string(i + 1));
         testText.setFillColor(sf::Color::White);
-        testText.setCharacterSize(30u);
+        testText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale)); // Scale test text font
         const sf::FloatRect ttb = testText.getLocalBounds();
         testText.setOrigin(ttb.position + ttb.size / 2.0f);
         testText.setPosition(sf::Vector2f(midX, currentY));
@@ -283,16 +332,8 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
         if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
             window.draw(testText);
         }
-        currentY += 60.0f; // Space between elements
+        currentY += baseSpacing * scale; // Scale spacing between elements
     }
-
-    // Calculate total content height properly
-    float totalContentHeight = (currentY + scrollOffset) - startingContentY;
-    maxScrollOffset = std::max(0.0f, totalContentHeight - contentAreaHeight);
-
-    // Clamp scroll offset - prevent scrolling above the content area top
-    float minScrollOffset = 0.0f;
-    scrollOffset = std::max(minScrollOffset, std::min(scrollOffset, maxScrollOffset));
 }
 
 void UI::DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui) {

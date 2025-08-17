@@ -13,9 +13,7 @@ public:
     sf::Font getedgesFont() const;
     sf::Font getpixellariFont() const;
 
-
-
-	//SETTINGS text
+    //SETTINGS text
     sf::Text& getSettingsText();
     //SETTINGS shape
     sf::RectangleShape& getSettings();
@@ -28,9 +26,6 @@ public:
 	sf::Text& getWindowModeText();
 	sf::Text& getFullscreenText();
 	sf::Text& getWindowedText();
-
-
-
 
     //RESET
     sf::Text& getResetButton();
@@ -48,7 +43,7 @@ public:
 
     //Update UI scaling and generate text shapes based on user resolution  
     enum class TextType { Reset, FPS, Click, TooClose, Settings, name };
-    void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type);
+    void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) const;
 
     //Initialize UI elements
     void InitializeTextUI(sf::RenderWindow& window, UI& ui);
@@ -88,6 +83,11 @@ public:
     float scrollOffset;
     float maxScrollOffset;
     float scrollSpeed;
+
+    // Scale constants
+    static constexpr float MIN_SCALE = 0.4f;
+    static constexpr float MAX_SCALE = 1.5f;
+	static constexpr float MAX_SCALE_FPS = 0.75f;
 
 private:
     //Private member variables
