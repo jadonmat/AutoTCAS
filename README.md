@@ -24,7 +24,7 @@ AutoTCAS is a program developed in Visual Studio 2022 with the idea of simulatin
 
 **System Requirements**
 -----------------------
-Operation System: Windows 10 or later (**64-bit only**)
+Operating System: Windows 10 or later (**64-bit only**)
 
 Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
@@ -42,7 +42,9 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
 **Known Issues**
 ----------------
-If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.4.0 alongside another big update.
+1. If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.4.0 alongside another big update.
+
+2. UI text does not currently change size based on window size. This will also be fixed in version 1.4.0 alongside another big update.
 
 
 
@@ -110,11 +112,11 @@ If you encounter linking issues:
 
 - **v1.2.0** - Basic settings menu, intro screen, spawn too close notification.
 - **v1.3.0** - TCAS audio, right click to delete aircraft, type of aircraft display.
-- **v1.4.0** - Zoom and move ability with new predefined larger map (circular boundary). No longer will have a boundary based on window bounds. Max # of aircraft.
+- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft. UI scaling will be automatic, fixing previous issues.
 - **v1.5.0** - Animated ailerons, aircraft collisions
 - **v1.6.0** - New types of aircraft, aircraft names.
 - **v1.7.0** - Overhauled intro screen, overhauled UI system. LIkely to implement a UI library.
-- **v1.8.0** - Predictive avoidance handling with speed changes, engine animations.
+- **v1.8.0** - Advanced predictive avoidance handling with speed changes, engine animations.
 - **v1.9.0** - Ability to select aircraft starting heading.
 - **v2.0.0** - To be determined
 
