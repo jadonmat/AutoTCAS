@@ -17,7 +17,7 @@ UI::UI() {
     dotTimer = 0.0f;
     dotCount = 0; // will range from 0 to 3
     fullClickMessage = "Click anywhere to begin";
-    bool settingsMenuOpen = false;
+    settingsMenuOpen = false;
 }
 
 
@@ -37,6 +37,18 @@ sf::Text& UI::getSettingsText() {
 
 sf::RectangleShape& UI::getSettings() {
     return settings; 
+}
+
+sf::RectangleShape& UI::getExitButton() {
+    return exitButton; 
+}
+
+sf::Text& UI::getExitText() {
+    return exitText; 
+}
+
+sf::Text& UI::getPauseText() {
+    return pauseText; 
 }
 
 sf::Text& UI::getResetButton() {
@@ -206,39 +218,59 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
 
 void UI::InitializeTextUI(sf::RenderWindow& window, UI& ui) {
     //SETTINGS Text
-    sf::Text settingstext = ui.getSettingsText();
+    sf::Text& settingstext = ui.getSettingsText();
 	ui.TextUpdate(settingstext, window, UI::TextType::Settings);
 
     // Reset BUTTON 
-    sf::Text reset = ui.getResetButton();
+    sf::Text& reset = ui.getResetButton();
     ui.TextUpdate(reset, window, UI::TextType::Reset);
 
     //FPS display
-    sf::Text fpsText = ui.getFPSDisplay();
+    sf::Text& fpsText = ui.getFPSDisplay();
     ui.TextUpdate(fpsText, window, UI::TextType::FPS);
 
     // Clicktext display
-    sf::Text clickText = ui.getClickText();
+    sf::Text& clickText = ui.getClickText();
     ui.TextUpdate(clickText, window, UI::TextType::Click);
 	// nameText display
-	sf::Text nameText = ui.getNameText();
+	sf::Text& nameText = ui.getNameText();
 	ui.TextUpdate(nameText, window, UI::TextType::name);
 
     //Too close display
-	sf::Text tooCloseText = ui.getClickText();
+	sf::Text& tooCloseText = ui.getClickText();
 	ui.TextUpdate(tooCloseText, window, UI::TextType::TooClose);
 
 }
 
 void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     //SETTINGS SHAPE
-    sf::RectangleShape settings = ui.getSettings();
-    ui.settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
-    ui.settings.setFillColor(sf::Color(50, 50, 50, 225));
-    sf::Vector2f center = ui.settings.getGeometricCenter();
-    ui.settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f));
-	window.draw(ui.settings);
+    sf::RectangleShape& settings = ui.getSettings();
+    settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
+    settings.setFillColor(sf::Color(50, 50, 50, 225));
+    sf::Vector2f center = settings.getGeometricCenter();
+    settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f));
+	window.draw(settings);
+
     // SETTINGS internal buttons
+    // 
+	// Exit Button
+	sf::RectangleShape& exitButton = ui.getExitButton();
+    exitButton.setSize(sf::Vector2f(35.0f, 35.0f));
+    exitButton.setFillColor(sf::Color(200, 0, 0));
+    sf::Vector2f centerExit = exitButton.getGeometricCenter();
+	exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f, settings.getGlobalBounds().position.y + 5.0f));
+	window.draw(exitButton);
+	// Exit Text
+	sf::Text& exitText = ui.getExitText();
+	exitText.setString("X");
+	exitText.setFillColor(sf::Color::White);
+    exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.85f)); // scale to button
+    const sf::FloatRect tb = exitText.getLocalBounds();
+    exitText.setOrigin(tb.position + tb.size / 2.0f);
+    exitText.setPosition(sf::Vector2f(exitButton.getPosition().x + exitButton.getSize().x * 0.5f, exitButton.getPosition().y + exitButton.getSize().y * 0.5f));
+	window.draw(exitText);
+    
+
 }
 
 void UI::DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui) {

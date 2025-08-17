@@ -20,6 +20,9 @@ public:
     //SETTINGS shape
     sf::RectangleShape& getSettings();
 	//SETTINGS internal buttons
+	sf::RectangleShape& getExitButton();
+	sf::Text& getExitText();
+	sf::Text& getPauseText();
 
 
 
@@ -53,8 +56,13 @@ public:
     bool showClickMessage;
     bool settingsMenuOpen;
     sf::Font edges = getedgesFont();
+
 	sf::Text settingsText{ edges };
     sf::RectangleShape settings;
+    sf::RectangleShape exitButton;
+	sf::Text exitText{ edges };
+	sf::Text pauseText{ edges };
+
     sf::Text reset{ edges };
     sf::Font pixellari = getpixellariFont();
     sf::Text fpsText{ pixellari };
