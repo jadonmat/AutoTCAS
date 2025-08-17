@@ -107,9 +107,9 @@ If you encounter linking issues:
 - **Boundary** - Boundary management
 - **Window** - Display and rendering management
   
-## 🚀 Roadmap (Subject to change)
+## 🚀Feature Roadmap (Subject to change)
 - ~~**v1.1.0** - Add seperate warning and collision detections. Redsign advoidance to focus on closet aircraft. More realistic flight physics.~~
-- **v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI.
+- **v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI, reset notification.
 - **v1.3.0** - TCAS audio, right click to delete aircraft, hover to view aircraft info.
 - **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft.
 - **v1.5.0** - Animated ailerons, aircraft collisions
