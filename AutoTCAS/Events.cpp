@@ -5,7 +5,7 @@ using namespace std;
 Events::Events() {}
 
 void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& clickText, sf::Text& fpsText, sf::Text& reset, sf::Text& settings) {
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& clickText, sf::Text& fpsText, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -41,12 +41,18 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                     }
                 }
                 // Check if click is on UI buttons (settings or reset)
+                // Only check settings bounds if menu is actually open
                 bool clickedOnUI = false;
-                if (reset.getGlobalBounds().contains(mousePos) || settings.getGlobalBounds().contains(mousePos)) {
+                if (reset.getGlobalBounds().contains(mousePos) || settingsText.getGlobalBounds().contains(mousePos)) {
+                    clickedOnUI = true;
+                }
+                // Only check settings rectangle collision if the menu is open
+                if (ui.settingsMenuOpen && settings.getGlobalBounds().contains(mousePos)) {
                     clickedOnUI = true;
                 }
 
-                if (!occupied && !clickedOnUI) {
+                // Only create aircraft if settings menu is NOT open
+                if (!occupied && !clickedOnUI && !ui.settingsMenuOpen) {
                     //std::cout << "the left button was pressed" << std::endl;
                     //std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
                     //std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
@@ -59,19 +65,19 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                     aircraftShapes.push_back(newAircraft->createAircraftShape(0.175f)); // Default for 1440p
                     std::cout << "Aircraft created at: " << mouseButtonPressed->position.x << ", " << mouseButtonPressed->position.y << endl;
 
-                
+
                     // Hide the message after first aircraft is created
                     if (ui.showClickMessage) {
                         ui.showClickMessage = false;
                     }
                 }
-                else if (occupied && !clickedOnUI) {
+                else if (occupied && !clickedOnUI && !ui.settingsMenuOpen) {
                     sf::Text newTooCloseText{ ui.edges };
                     ui.tooCloseTexts.push_back(newTooCloseText);
                     ui.tooCloseTimers.push_back(0.0f);
                     ui.tooCloseDurations.push_back(1.0f);
                     ui.tooClosePositions.push_back(mousePos);
-				}
+                }
 
             }
             // RESET BUTTON
@@ -81,6 +87,20 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                 aircraftShapes.clear();
                 std::cout << "Reset Button pressed" << endl;
                 std::cout << "All Aircraft Deleted" << endl;
+            }
+
+            // SETTINGS BUTTON
+            if (settingsText.getGlobalBounds().contains(mousePos)) {
+                if (!ui.settingsMenuOpen) {
+                    ui.GenerateSettingsMenu(window, ui);
+                    ui.settingsMenuOpen = true;
+                }
+            }
+
+            //settings close behavior
+            else if (ui.settingsMenuOpen && !settings.getGlobalBounds().contains(mousePos)) {
+                ui.settingsMenuOpen = false;
+                //other ui elements are still drawn in the main loop
             }
         }
 
@@ -103,7 +123,8 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
 
             }
             // Update message position if window resized
-            clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
+            sf::Vector2f center = ui.settings.getGeometricCenter();
+            settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
         }
 
     } // END EVENT LOOPS

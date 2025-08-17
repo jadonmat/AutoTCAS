@@ -25,7 +25,7 @@ public:
     //update the aircrafts position over time
     void update(sf::Time dt);
 
-    void avoidCollision(int i, sf::RenderWindow& window, const std::vector<Aircraft*>& aircrafts, std::vector<std::vector<sf::ConvexShape>>& aircraftShapes,
+    void DetectCollisionAndDraw(int i, sf::RenderWindow& window, const std::vector<Aircraft*>& aircrafts, std::vector<std::vector<sf::ConvexShape>>& aircraftShapes,
         sf::Time dt, float smoothingFactor, float maxTurnRate);
 
 protected:

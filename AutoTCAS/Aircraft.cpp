@@ -23,7 +23,7 @@ void Aircraft::update(sf::Time dt) {
     position.y += velocity.y * dt.asSeconds();
 }
 
-void Aircraft::avoidCollision(int i, sf::RenderWindow& window, const std::vector<Aircraft*>& aircrafts, std::vector<std::vector<sf::ConvexShape>>& aircraftShapes,
+void Aircraft::DetectCollisionAndDraw(int i, sf::RenderWindow& window, const std::vector<Aircraft*>& aircrafts, std::vector<std::vector<sf::ConvexShape>>& aircraftShapes,
     sf::Time dt, float smoothingfactor, float maxturnrate) {
     float deltaTime = dt.asSeconds();
     if (deltaTime <= 0.f) {

@@ -17,6 +17,7 @@ UI::UI() {
     dotTimer = 0.0f;
     dotCount = 0; // will range from 0 to 3
     fullClickMessage = "Click anywhere to begin";
+    bool settingsMenuOpen = false;
 }
 
 
@@ -34,9 +35,9 @@ sf::Text& UI::getSettingsText() {
     return settingsText;
 }
 
-
-
-
+sf::RectangleShape& UI::getSettings() {
+    return settings; 
+}
 
 sf::Text& UI::getResetButton() {
     return reset; 
@@ -101,7 +102,7 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
         vector<sf::Text> ErrorTexts(static_cast<size_t>(textamt), sf::Text(font));
 
         sf::Clock errorClock;
-        float errorTime = 30.0f; // seconds
+        float errorTime = 45.0f; // seconds
 
         // loop is taking over main loop until errorTime is reached
         while (errorClock.getElapsedTime().asSeconds() < errorTime) {
@@ -177,7 +178,7 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
         text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.f));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
+        //text.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
         text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
     }
     else if (type == TextType::name) {
@@ -194,7 +195,7 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
         text.setCharacterSize(static_cast<unsigned int>(TooCloseCharacterSize));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
+        //text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
 	}
     else {
         cout << "ERROR: TextUpdate type does not match up" << endl;
@@ -203,13 +204,10 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
 
 
 
-void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
-    //SETTINGS BUTTON (make shape later)
-    sf::Text settings = ui.getSettingsText();
-	ui.TextUpdate(settings, window, UI::TextType::Settings);
-    //SETTINGS SHAPE
-	sf::RectangleShape settingsButton;
-    //SETTINGS internal buttons
+void UI::InitializeTextUI(sf::RenderWindow& window, UI& ui) {
+    //SETTINGS Text
+    sf::Text settingstext = ui.getSettingsText();
+	ui.TextUpdate(settingstext, window, UI::TextType::Settings);
 
     // Reset BUTTON 
     sf::Text reset = ui.getResetButton();
@@ -230,18 +228,31 @@ void UI::InitializeUI(sf::RenderWindow& window, UI& ui) {
 	sf::Text tooCloseText = ui.getClickText();
 	ui.TextUpdate(tooCloseText, window, UI::TextType::TooClose);
 
-
 }
 
+void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
+    //SETTINGS SHAPE
+    sf::RectangleShape settings = ui.getSettings();
+    ui.settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
+    ui.settings.setFillColor(sf::Color(50, 50, 50, 225));
+    sf::Vector2f center = ui.settings.getGeometricCenter();
+    ui.settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f));
+	window.draw(ui.settings);
+    // SETTINGS internal buttons
+}
 
-
-void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
-	//Settings Button
+void UI::DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui) {
+	//Settings
     if(!ui.showClickMessage) {
         ui.TextUpdate(ui.settingsText, window, TextType::Settings);
         window.draw(ui.settingsText);
 	}
-    
+
+    // Draw settings menu only if open
+    if (ui.settingsMenuOpen) {
+        ui.GenerateSettingsMenu(window, ui);
+    }
+
     // Reset Button
     if (!ui.showClickMessage) {
         ui.TextUpdate(ui.reset, window, TextType::Reset);
@@ -289,9 +300,8 @@ void UI::DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         }
 		ui.TextUpdate(ui.clickText, window, UI::TextType::Click);
         clickText.setString(displayText);
-        // Always set origin from the local bounds to keep it centered.
+		// Always set origin from the local bounds to keep it centered while the size inscreases
         clickText.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
-        //clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
 
 
 		ui.TextUpdate(ui.nameText, window, UI::TextType::name);

@@ -14,11 +14,15 @@ public:
     sf::Font getpixellariFont() const;
 
 
+
 	//SETTINGS text
     sf::Text& getSettingsText();
     //SETTINGS shape
-    //sf::RectangleShape& getSettingsButton();
+    sf::RectangleShape& getSettings();
 	//SETTINGS internal buttons
+
+
+
 
     //RESET
     sf::Text& getResetButton();
@@ -39,16 +43,18 @@ public:
     void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type);
 
     //Initialize UI elements
-    void InitializeUI(sf::RenderWindow& window, UI& ui);
-
+    void InitializeTextUI(sf::RenderWindow& window, UI& ui);
+	void GenerateSettingsMenu(sf::RenderWindow& window, UI& ui);
     // Draw and/or animate UI elements
-    void DrawAndOrAnimate(sf::RenderWindow& window, sf::Time dt, UI& ui);
+    void DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui);
 
     //////////////////////////////////////////////////////////////
 	//Public member variables (need to be accessed in main) (may want to make these private later and make getters)
     bool showClickMessage;
+    bool settingsMenuOpen;
     sf::Font edges = getedgesFont();
 	sf::Text settingsText{ edges };
+    sf::RectangleShape settings;
     sf::Text reset{ edges };
     sf::Font pixellari = getpixellariFont();
     sf::Text fpsText{ pixellari };
@@ -78,4 +84,6 @@ private:
     float dotInterval;
     float dotTimer;
     int dotCount;
+
+
 };
