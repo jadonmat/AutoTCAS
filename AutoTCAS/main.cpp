@@ -42,7 +42,7 @@ using namespace std;
 
         Events Events;
 		// Handle events in event class
-		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui,  ui.clickText, ui.fpsText, ui.reset, ui.settingsText, ui.settings);
+		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui,  ui.clickText, ui.fpsText, ui.reset, ui.settingsText, ui.settings, ui.exitButton);
 
 
         // Only update simulation if settings menu is not open (PAUSE FUNCTIONALITY)

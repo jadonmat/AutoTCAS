@@ -1,4 +1,4 @@
-        //Seperate class, not related to the aircraft inherentence structure.
+//Seperate class, not related to the aircraft inherentence structure.
 #include <iostream>
 #include <vector>
 #include "UI.h"
@@ -34,21 +34,26 @@ sf::Font UI::getpixellariFont() const {
 sf::Text& UI::getSettingsText() {
     return settingsText;
 }
-
 sf::RectangleShape& UI::getSettings() {
     return settings; 
 }
-
 sf::RectangleShape& UI::getExitButton() {
     return exitButton; 
 }
-
 sf::Text& UI::getExitText() {
     return exitText; 
 }
-
 sf::Text& UI::getPauseText() {
     return pauseText; 
+}
+sf::Text& UI::getWindowModeText() {
+    return WindowModeText; 
+}
+sf::Text& UI::getFullscreenText() {
+    return FullscreenText; 
+}
+sf::Text& UI::getWindowedText() {
+    return WindowedText; 
 }
 
 sf::Text& UI::getResetButton() {
@@ -246,7 +251,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     //SETTINGS SHAPE
     sf::RectangleShape& settings = ui.getSettings();
     settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
-    settings.setFillColor(sf::Color(50, 50, 50, 225));
+    settings.setFillColor(sf::Color(50, 50, 50, 150));
     sf::Vector2f center = settings.getGeometricCenter();
     settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f));
 	window.draw(settings);
@@ -264,12 +269,24 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
 	sf::Text& exitText = ui.getExitText();
 	exitText.setString("X");
 	exitText.setFillColor(sf::Color::White);
-    exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.85f)); // scale to button
+    exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.9f)); // scale to button
     const sf::FloatRect tb = exitText.getLocalBounds();
     exitText.setOrigin(tb.position + tb.size / 2.0f);
     exitText.setPosition(sf::Vector2f(exitButton.getPosition().x + exitButton.getSize().x * 0.5f, exitButton.getPosition().y + exitButton.getSize().y * 0.5f));
 	window.draw(exitText);
-    
+    // Pause Text
+	sf::Text& pauseText = ui.getPauseText();
+	pauseText.setString("**PAUSED**");
+    pauseText.setFillColor(sf::Color::White);
+    pauseText.setCharacterSize(50u);
+    const sf::FloatRect ptb = pauseText.getLocalBounds();
+    pauseText.setOrigin(ptb.position + ptb.size / 2.0f);
+    const float settingsTop = settings.getGlobalBounds().position.y;
+    const float midY = settingsTop * 0.5f;
+    const float midX = settings.getPosition().x + settings.getSize().x * 0.5f;
+    pauseText.setPosition(sf::Vector2f(midX, midY));
+    window.draw(pauseText);
+	// Window Mode Text
 
 }
 

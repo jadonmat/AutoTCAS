@@ -23,6 +23,9 @@ public:
 	sf::RectangleShape& getExitButton();
 	sf::Text& getExitText();
 	sf::Text& getPauseText();
+	sf::Text& getWindowModeText();
+	sf::Text& getFullscreenText();
+	sf::Text& getWindowedText();
 
 
 
@@ -62,6 +65,9 @@ public:
     sf::RectangleShape exitButton;
 	sf::Text exitText{ edges };
 	sf::Text pauseText{ edges };
+	sf::Text WindowModeText{ edges };
+	sf::Text FullscreenText{ edges };
+	sf::Text WindowedText{ edges };
 
     sf::Text reset{ edges };
     sf::Font pixellari = getpixellariFont();
