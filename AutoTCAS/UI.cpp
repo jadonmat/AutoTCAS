@@ -90,101 +90,35 @@ sf::Text& UI::getTooCloseMessage() {
 // handles differnet buttons with texttype
 void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
     sf::Font font = getedgesFont();
-    float CharacterSize = 0.0f;
-    float CharacterSizeFPS = 0.0f;
-	float TooCloseCharacterSize = 0.0f;
-    sf::VideoMode CurrentDesktopMode = sf::VideoMode::getDesktopMode();
-    //720p case
-    if (CurrentDesktopMode.size.x == 1280u && CurrentDesktopMode.size.y == 720u) {
-        CharacterSize = 20.0f;
-        CharacterSizeFPS = 10.0f;
-        TooCloseCharacterSize = 8.0f;
-        //cout << "1280x720" << endl;
-    }
-    //1080p case
-    else if (CurrentDesktopMode.size.x == 1920u && CurrentDesktopMode.size.y == 1080u) {
-        CharacterSize = 25.0f;
-        CharacterSizeFPS = 12.5f;
-		TooCloseCharacterSize = 8.0f;
-        //cout << "1920x1080" << endl;
-    }
-    //1440p case
-    else if (CurrentDesktopMode.size.x == 2560u && CurrentDesktopMode.size.y == 1440u) {
-        CharacterSize = 30.0f;
-        CharacterSizeFPS = 15.0f;
-		TooCloseCharacterSize = 10.0f;
-        //cout << "2560x1440" << endl;
-    }
-    // 3.5k to 4k case
-    else if (CurrentDesktopMode.size.x >= 3456u && CurrentDesktopMode.size.x <= 3840u && CurrentDesktopMode.size.y == 2160u) {
-        CharacterSize = 45.0f;
-        CharacterSizeFPS = 27.5f;
-        TooCloseCharacterSize = 11.0f;
-        //cout << "3456x1440" << endl;
-    }
-    // 4k
-    else {
-        cout << "ERROR: Scaling does not match up" << endl;
-        int textamt = 11;
-        vector<sf::Text> ErrorTexts(static_cast<size_t>(textamt), sf::Text(font));
-
-        sf::Clock errorClock;
-        float errorTime = 45.0f; // seconds
-
-        // loop is taking over main loop until errorTime is reached
-        while (errorClock.getElapsedTime().asSeconds() < errorTime) {
-            // SFML 3.0 event loop
-            while (const std::optional event = window.pollEvent()) {
-                if (event->is<sf::Event::Closed>()) {
-                    window.close();
-                    exit(1);
-                }
-                else if (const auto* resized = event->getIf<sf::Event::Resized>())
-                {
-                    // update the view to the new size of the window
-                    sf::FloatRect visibleArea({ 0.0f, 0.0f }, sf::Vector2f(resized->size));
-                    window.setView(sf::View(visibleArea));
-                }
-            }
-            for (int i = 0; i < textamt; ++i) {
-                ErrorTexts[static_cast<size_t>(i)].setFont(font);
-                ErrorTexts[static_cast<size_t>(i)].setCharacterSize(25u);
-                ErrorTexts[static_cast<size_t>(i)].setFillColor(sf::Color::Red);
-                ErrorTexts[static_cast<size_t>(i)].setOrigin(ErrorTexts[static_cast<size_t>(i)].getLocalBounds().position + ErrorTexts[static_cast<size_t>(i)].getLocalBounds().size / 2.0f);
-                ErrorTexts[static_cast<size_t>(i)].setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 3.0f + static_cast<float>(i - 1) * 40.0f));
-            }
-            float secondsLeft = errorTime - errorClock.getElapsedTime().asSeconds();
-            ErrorTexts[0].setString("ERROR: Incompatable Desktop Resolution.");
-            ErrorTexts[1].setString(" ");
-            ErrorTexts[2].setString("Current Resolution: " + std::to_string(CurrentDesktopMode.size.x) + "x" + std::to_string(CurrentDesktopMode.size.y));
-            ErrorTexts[3].setString(" ");
-            ErrorTexts[4].setString("Supported Desktop Resolutions (Set in Device Settings):");
-            ErrorTexts[5].setString("3456x2160 up to 4k (3840x2160),");
-            ErrorTexts[6].setString("2560x1440,");
-            ErrorTexts[7].setString("1920x1080,");
-            ErrorTexts[8].setString("1280x720");
-            ErrorTexts[9].setString(" ");
-            ErrorTexts[10].setString("Window will close in " + std::to_string(static_cast<int>(std::ceil(secondsLeft))) + " seconds.");
-
-            window.clear(sf::Color::Black);
-            for (int i = 0; i < textamt; ++i) {
-                ErrorTexts[static_cast<size_t>(i)].setOrigin(ErrorTexts[static_cast<size_t>(i)].getLocalBounds().position + ErrorTexts[static_cast<size_t>(i)].getLocalBounds().size / 2.0f);
-                window.draw(ErrorTexts[static_cast<size_t>(i)]);
-            }
-            window.display();
-        }
-        window.close();
-        exit(1);
-    }
-
-    float resetdiff = 10.0f;
+    
+    // Get current window size instead of desktop mode
+    sf::Vector2u windowSize = window.getSize();
+    
+    // Calculate scaling factors based on window size
+    // Using 1440p as the base reference resolution
+    float scaleX = static_cast<float>(windowSize.x) / 2560.0f;
+    float scaleY = static_cast<float>(windowSize.y) / 1440.0f;
+    float scale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+    
+    // Base character sizes (for 1920x1080)
+    float baseCharacterSize = 50.0f;
+    float baseFPSSize = 30.0f;
+    float baseTooCloseSize = 8.0f;
+    
+    // Calculate scaled sizes
+    float CharacterSize = baseCharacterSize * scale;
+    float CharacterSizeFPS = baseFPSSize * scale;
+    float TooCloseCharacterSize = baseTooCloseSize; //* scale;
+    
+    float resetdiff = 10.0f * scale; // Scale the offset too
+    
     if (type == TextType::Reset) {
         text.setString("RESET");
         text.setFillColor(sf::Color::White);
         text.setCharacterSize(static_cast<unsigned int>(CharacterSize));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 45.0f));
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 70.0f * scale));
     }
     else if(type == TextType::Settings) {
         text.setString("SETTINGS");
@@ -192,29 +126,28 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
         text.setCharacterSize(static_cast<unsigned int>(CharacterSize));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f));
-	}
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f * scale));
+    }
     else if (type == TextType::FPS) {
         text.setFillColor(sf::Color::Green);
         text.setCharacterSize(static_cast<unsigned int>(CharacterSizeFPS));
-        text.setPosition(sf::Vector2f(10.0f, 5.0f));
+        text.setPosition(sf::Vector2f(10.0f * scale, 5.0f * scale));
     }
     else if (type == TextType::Click) {
         text.setString("Click");
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.f));
+        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.0f * scale));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        //text.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
         text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
     }
     else if (type == TextType::name) {
         text.setString("Welcome to AutoTCAS");
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 50.f));
+        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 50.0f * scale));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - 200.0f ));
+        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - 200.0f * scale));
     }
     else if (type == TextType::TooClose) {
         text.setString("TOO CLOSE");
@@ -222,11 +155,10 @@ void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) {
         text.setCharacterSize(static_cast<unsigned int>(TooCloseCharacterSize));
         sf::FloatRect bounds = text.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        //text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
-	}
+    }
     else {
-        cout << "ERROR: TextUpdate type does not match up" << endl;
-	}
+        //cout << "ERROR: TextUpdate type does not match up" << endl;
+    }
 }
 
 
