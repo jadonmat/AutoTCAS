@@ -42,9 +42,10 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
 **Known Issues**
 ----------------
-1. If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.4.0 alongside another big update.
+1. UI text does not currently change size based on window size. This will be fixed in version 1.2.0.
+  
+2. If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.4.0 alongside another big update.
 
-2. UI text does not currently change size based on window size. This will also be fixed in version 1.4.0 alongside another big update.
 
 
 
@@ -110,9 +111,9 @@ If you encounter linking issues:
   
 ## 🚀 Roadmap (Subject to change)
 
-- **v1.2.0** - Basic settings menu, intro screen, spawn too close notification.
-- **v1.3.0** - TCAS audio, right click to delete aircraft, type of aircraft display.
-- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft. UI scaling will be automatic, fixing previous issues.
+- **v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI.
+- **v1.3.0** - TCAS audio, right click to delete aircraft, hover to view aircraft info.
+- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft.
 - **v1.5.0** - Animated ailerons, aircraft collisions
 - **v1.6.0** - New types of aircraft, aircraft names.
 - **v1.7.0** - Overhauled intro screen, overhauled UI system. LIkely to implement a UI library.
