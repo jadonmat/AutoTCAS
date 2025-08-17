@@ -133,6 +133,14 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
             settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y));
         }
 
+        // scroll wheel support
+        else if (const auto* mouseWheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>())
+        {
+            if (ui.settingsMenuOpen && ui.getSettings().getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                ui.scrollOffset -= mouseWheelScrolled->delta * ui.scrollSpeed;
+            }
+        }
+
     } // END EVENT LOOPS
 
 }

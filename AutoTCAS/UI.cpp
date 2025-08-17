@@ -18,6 +18,10 @@ UI::UI() {
     dotCount = 0; // will range from 0 to 3
     fullClickMessage = "Click anywhere to begin";
     settingsMenuOpen = false;
+    scrollOffset = 0.0f;
+    maxScrollOffset = 0.0f;
+    scrollSpeed = 50.0f;
+
 }
 
 
@@ -37,6 +41,9 @@ sf::Text& UI::getSettingsText() {
 sf::RectangleShape& UI::getSettings() {
     return settings; 
 }
+sf::Text& UI::getSettingsHeader() {
+    return SettingsHeader; 
+}
 sf::RectangleShape& UI::getExitButton() {
     return exitButton; 
 }
@@ -45,6 +52,9 @@ sf::Text& UI::getExitText() {
 }
 sf::Text& UI::getPauseText() {
     return pauseText; 
+}
+sf::Text& UI::getWindowSettingsText() {
+    return WindowSettingsText; 
 }
 sf::Text& UI::getWindowModeText() {
     return WindowModeText; 
@@ -250,33 +260,34 @@ void UI::InitializeTextUI(sf::RenderWindow& window, UI& ui) {
 void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     //SETTINGS SHAPE
     sf::RectangleShape& settings = ui.getSettings();
-    settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
+    settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().y) - 250.0f, static_cast<float>(window.getSize().y) - 250.0f));
     settings.setFillColor(sf::Color(50, 50, 50, 150));
+    settings.setOutlineColor(sf::Color::White);
+    settings.setOutlineThickness(0.5f);
     sf::Vector2f center = settings.getGeometricCenter();
     settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f));
-	window.draw(settings);
-
-    // SETTINGS internal buttons
-    // 
-	// Exit Button
-	sf::RectangleShape& exitButton = ui.getExitButton();
-    exitButton.setSize(sf::Vector2f(35.0f, 35.0f));
+    window.draw(settings);
+    
+    // Exit Button (fixed position - doesn't scroll)
+    sf::RectangleShape& exitButton = ui.getExitButton();
+    exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.075f, settings.getSize().y * 0.075f));
     exitButton.setFillColor(sf::Color(200, 0, 0));
-    sf::Vector2f centerExit = exitButton.getGeometricCenter();
-	exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f, settings.getGlobalBounds().position.y + 5.0f));
-	window.draw(exitButton);
-	// Exit Text
-	sf::Text& exitText = ui.getExitText();
-	exitText.setString("X");
-	exitText.setFillColor(sf::Color::White);
-    exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.9f)); // scale to button
+    exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f, settings.getGlobalBounds().position.y + 5.0f));
+    window.draw(exitButton);
+    
+    // Exit Text (fixed position)
+    sf::Text& exitText = ui.getExitText();
+    exitText.setString("X");
+    exitText.setFillColor(sf::Color::White);
+    exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.9f));
     const sf::FloatRect tb = exitText.getLocalBounds();
     exitText.setOrigin(tb.position + tb.size / 2.0f);
     exitText.setPosition(sf::Vector2f(exitButton.getPosition().x + exitButton.getSize().x * 0.5f, exitButton.getPosition().y + exitButton.getSize().y * 0.5f));
-	window.draw(exitText);
-    // Pause Text
-	sf::Text& pauseText = ui.getPauseText();
-	pauseText.setString("**PAUSED**");
+    window.draw(exitText);
+
+    // Pause Text (fixed position)
+    sf::Text& pauseText = ui.getPauseText();
+    pauseText.setString("**PAUSED**");
     pauseText.setFillColor(sf::Color::White);
     pauseText.setCharacterSize(50u);
     const sf::FloatRect ptb = pauseText.getLocalBounds();
@@ -286,8 +297,70 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     const float midX = settings.getPosition().x + settings.getSize().x * 0.5f;
     pauseText.setPosition(sf::Vector2f(midX, midY));
     window.draw(pauseText);
-	// Window Mode Text
 
+
+    // SCROLLABLE CONTENT
+    float contentAreaTop = exitButton.getGlobalBounds().position.y + 80.0f; // Leave space for header
+    float contentAreaHeight = settings.getGlobalBounds().size.y - 120.0f; // Leave space for header/footer
+    float startingContentY = contentAreaTop;
+    
+    
+    float currentY = contentAreaTop - scrollOffset;
+    
+    //Window Settings Text (scrollable)
+    sf::Text& windowSettingsText = ui.getWindowSettingsText();
+    windowSettingsText.setString("Window Settings (INOP)");
+    windowSettingsText.setFillColor(sf::Color::White);
+    windowSettingsText.setCharacterSize(static_cast<unsigned int>(settings.getSize().y * 0.05f));
+    const sf::FloatRect wstb = windowSettingsText.getLocalBounds();
+    windowSettingsText.setOrigin(wstb.position + wstb.size / 2.0f);
+    windowSettingsText.setPosition(sf::Vector2f(midX, currentY));
+    // Only draw if within visible area
+    if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
+        window.draw(windowSettingsText);
+    }
+    currentY += 60.0f; // Space between elements
+    
+    // WINDOW MODE TEXT (scrollable)
+    sf::Text& windowModeText = ui.getWindowModeText();
+    windowModeText.setString("Current Window Mode: ");
+    windowModeText.setFillColor(sf::Color::White);
+    windowModeText.setCharacterSize(static_cast<unsigned int>(settings.getSize().y * 0.05f - 10.0f));
+    const sf::FloatRect wmtb = windowModeText.getLocalBounds();
+    windowModeText.setOrigin(wmtb.position + wmtb.size / 2.0f);
+    windowModeText.setPosition(sf::Vector2f(midX, currentY));
+
+    // Only draw if within visible area
+    if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
+        window.draw(windowModeText);
+    }
+    currentY += 100.0f; // Space between elements
+
+    
+    // Add more content to test scrolling
+    for (int i = 0; i < 10; ++i) {
+        sf::Text testText{ ui.edges };
+        testText.setString("Test Option " + std::to_string(i + 1));
+        testText.setFillColor(sf::Color::White);
+        testText.setCharacterSize(30u);
+        const sf::FloatRect ttb = testText.getLocalBounds();
+        testText.setOrigin(ttb.position + ttb.size / 2.0f);
+        testText.setPosition(sf::Vector2f(midX, currentY));
+        
+        // Only draw if within visible area
+        if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
+            window.draw(testText);
+        }
+        currentY += 60.0f; // Space between elements
+    }
+
+    // Calculate total content height properly
+    float totalContentHeight = (currentY + scrollOffset) - startingContentY;
+    maxScrollOffset = std::max(0.0f, totalContentHeight - contentAreaHeight);
+
+    // Clamp scroll offset - prevent scrolling above the content area top
+    float minScrollOffset = 0.0f;
+    scrollOffset = std::max(minScrollOffset, std::min(scrollOffset, maxScrollOffset));
 }
 
 void UI::DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui) {

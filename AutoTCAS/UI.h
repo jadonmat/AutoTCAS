@@ -20,9 +20,11 @@ public:
     //SETTINGS shape
     sf::RectangleShape& getSettings();
 	//SETTINGS internal buttons
+	sf::Text& getSettingsHeader();
 	sf::RectangleShape& getExitButton();
 	sf::Text& getExitText();
 	sf::Text& getPauseText();
+	sf::Text& getWindowSettingsText();
 	sf::Text& getWindowModeText();
 	sf::Text& getFullscreenText();
 	sf::Text& getWindowedText();
@@ -63,8 +65,10 @@ public:
 	sf::Text settingsText{ edges };
     sf::RectangleShape settings;
     sf::RectangleShape exitButton;
+	sf::Text SettingsHeader{ edges };
 	sf::Text exitText{ edges };
 	sf::Text pauseText{ edges };
+	sf::Text WindowSettingsText{ edges };
 	sf::Text WindowModeText{ edges };
 	sf::Text FullscreenText{ edges };
 	sf::Text WindowedText{ edges };
@@ -80,6 +84,10 @@ public:
     std::vector<float> tooCloseTimers;
     std::vector<float> tooCloseDurations;
     std::vector<sf::Vector2f> tooClosePositions;
+
+    float scrollOffset;
+    float maxScrollOffset;
+    float scrollSpeed;
 
 private:
     //Private member variables
@@ -98,6 +106,4 @@ private:
     float dotInterval;
     float dotTimer;
     int dotCount;
-
-
 };
