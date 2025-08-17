@@ -41,10 +41,8 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 > ⚠️ **Note**: Keep all DLL files in the same directory as the executable
 
 **Known Issues**
-----------------
-1. UI text does not currently change size based on window size. This will be fixed in version 1.2.0.
-  
-2. If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.4.0 alongside another big update.
+---------------- 
+1. If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.2.0.
 
 
 
@@ -110,13 +108,13 @@ If you encounter linking issues:
 - **Window** - Display and rendering management
   
 ## 🚀 Roadmap (Subject to change)
-
+- ~~**v1.1.0** - Add seperate warning and collision detections. Redsign advoidance to focus on closet aircraft. More realistic flight physics.~~
 - **v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI.
 - **v1.3.0** - TCAS audio, right click to delete aircraft, hover to view aircraft info.
-- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft. Set resolution scaling in settings.
+- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft.
 - **v1.5.0** - Animated ailerons, aircraft collisions
 - **v1.6.0** - New types of aircraft, aircraft names.
-- **v1.7.0** - Overhauled intro screen, overhauled UI system. LIkely to implement a UI library.
+- **v1.7.0** - Overhauled intro screen, overhauled UI system, program thumbnail. LIkely to implement a UI library.
 - **v1.8.0** - Advanced predictive avoidance handling with speed changes, engine animations.
 - **v1.9.0** - Ability to select aircraft starting heading.
 - **v2.0.0** - To be determined
