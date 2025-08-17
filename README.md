@@ -113,7 +113,7 @@ If you encounter linking issues:
 
 - **v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI.
 - **v1.3.0** - TCAS audio, right click to delete aircraft, hover to view aircraft info.
-- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft.
+- **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft. Set resolution scaling in settings.
 - **v1.5.0** - Animated ailerons, aircraft collisions
 - **v1.6.0** - New types of aircraft, aircraft names.
 - **v1.7.0** - Overhauled intro screen, overhauled UI system. LIkely to implement a UI library.
