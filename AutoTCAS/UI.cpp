@@ -176,37 +176,60 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
 	float scale_settings = std::clamp(rawScale, MIN_SCALE, MAX_SCALE_SETTINGS);
 
     // Base sizes for scaling
-    float baseMenuWidth = 1500.0f;
-    float baseMenuHeight = 500.0f;
-    float baseSpacing = 60.0f;
-    float baseLargeSpacing = 100.0f;
-    float baseHeaderOffset = 80.0f;
-    float baseMargin = 120.0f;
-    float baseFontSize = 100.0f;
-    float baseSmallFontSize = 30.0f;
+	float baseMenuWidth = 1700.0f; // lowers the width of the settings menu
+	float baseMenuHeight = 500.0f; // lowers the height of the settings menu
+	float baseSpacing = 60.0f; // Spacing between elements
+	float baseLargeSpacing = 100.0f; // Large spacing between sections
+	float baseMargin = 120.0f; // Margin for the settings menu
+	float baseFontSize = 80.0f; // Base font size for text
+	float baseSmallFontSize = 30.0f; // Base font size for smaller text (sub sections)
 
     //SETTINGS SHAPE - Calculate proposed size first
     float proposedWidth = static_cast<float>(window.getSize().x) - baseMenuWidth * scale * 0.75f;
     float proposedHeight = static_cast<float>(window.getSize().y) - baseMenuHeight * scale * 0.75f;
     
-    // Apply maximum size constraints
+    // When window is narrow, limit the height more aggressively
+    float dynamicMaxHeight = std::min(MAX_SETTINGS_HEIGHT, static_cast<float>(windowSize.x) * 0.5f);
+    
+    // Apply max size constraints
     float finalWidth = std::min(proposedWidth, MAX_SETTINGS_WIDTH);
-    //float finalHeight = std::min(proposedHeight, MAX_SETTINGS_HEIGHT);
+	float finalHeight = std::min(proposedHeight, dynamicMaxHeight);
     
     sf::RectangleShape& settings = ui.getSettings();
-    settings.setSize(sf::Vector2f(finalWidth, proposedHeight));
+    settings.setSize(sf::Vector2f(finalWidth, finalHeight));
     settings.setFillColor(sf::Color(50, 50, 50, 150));
     settings.setOutlineColor(sf::Color::White);
-    settings.setOutlineThickness(0.5f * scale);
+    settings.setOutlineThickness(0.75f * scale);
     sf::Vector2f center = settings.getGeometricCenter();
     settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f * scale));
     window.draw(settings);
     
     // Exit Button (fixed position - doesn't scroll)
     sf::RectangleShape& exitButton = ui.getExitButton();
-    exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.075f, settings.getSize().y * 0.075f));
+    exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.085f, settings.getSize().y * 0.085f));
     exitButton.setFillColor(sf::Color(200, 0, 0));
     exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f * scale, settings.getGlobalBounds().position.y + 5.0f * scale));
+    
+    // Calculate header height based on exit button position
+    float headerHeight = exitButton.getGlobalBounds().position.y + exitButton.getGlobalBounds().size.y - settings.getGlobalBounds().position.y + 10.0f * scale;
+    
+    // Header background (fixed position)
+    sf::RectangleShape header;
+    header.setSize(sf::Vector2f(settings.getSize().x, headerHeight));
+    header.setFillColor(sf::Color(70, 70, 70, 200));
+    header.setPosition(settings.getPosition());
+    window.draw(header);
+    
+    // Redraw settings outline to appear on top of header
+    sf::RectangleShape settingsOutline;
+    settingsOutline.setSize(settings.getSize());
+    settingsOutline.setPosition(settings.getPosition());
+    settingsOutline.setFillColor(sf::Color::Transparent);
+    settingsOutline.setOutlineColor(sf::Color::White);
+    settingsOutline.setOutlineThickness(0.5f * scale);
+    window.draw(settingsOutline);
+    
+    // Draw exit button on top of header
     window.draw(exitButton);
     
     // Exit Text (fixed position)
@@ -232,28 +255,42 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     pauseText.setPosition(sf::Vector2f(midX, midY));
     window.draw(pauseText);
 
-    // Settings Title Text (fixed position)
+    // Settings Title Text (fixed position in header)
     sf::Text settingsTitle{ edges };
     settingsTitle.setString("SETTINGS MENU");
     settingsTitle.setFillColor(sf::Color::White);
-    settingsTitle.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 1.5f));
+    // Scale font size based on header height
+    float titleFontSize = headerHeight * 0.8f;
+    settingsTitle.setCharacterSize(static_cast<unsigned int>(titleFontSize));
     const sf::FloatRect stb = settingsTitle.getLocalBounds();
     settingsTitle.setOrigin(stb.position + stb.size / 2.0f);
-    settingsTitle.setPosition(sf::Vector2f(midX, settings.getPosition().y + baseHeaderOffset * scale));
-    //window.draw(settingsTitle);
+    // Center the title vertically within the header
+    float headerCenterY = header.getPosition().y + header.getSize().y * 0.5f;
+    settingsTitle.setPosition(sf::Vector2f(midX, headerCenterY));
+    window.draw(settingsTitle);
 
-    // SCROLLABLE CONTENT
-    float contentAreaTop = exitButton.getGlobalBounds().position.y + baseHeaderOffset * scale; // Scale header offset
-    float contentAreaHeight = settings.getGlobalBounds().size.y - baseMargin * scale; // Scale margin
-    float startingContentY = contentAreaTop;
+    // SCROLLABLE CONTENT starts after the header
+    float contentAreaTop = header.getPosition().y + header.getSize().y;
+    float contentAreaHeight = settings.getGlobalBounds().size.y - headerHeight;
+    
+    // Add some padding after the header
+    float contentPadding = 30.0f * scale;
+    contentAreaTop += contentPadding;
+    contentAreaHeight -= contentPadding * 2.0f; // Subtract padding from both top and bottom
+    
+    // Define strict boundaries for content visibility
+    float contentVisibleTop = contentAreaTop;
+    float contentVisibleBottom = contentAreaTop + contentAreaHeight;
     
     // Calculate total content height first (without drawing) - scale all spacing
-    float tempCurrentY = contentAreaTop;
+    float tempCurrentY = 0.0f; // Start from 0 for relative calculation
     tempCurrentY += baseSpacing * scale; // Window Settings Text height
-    tempCurrentY += baseLargeSpacing * scale; // Window Mode Text height
-    tempCurrentY += 10 * baseSpacing * scale; // Test options height
+    tempCurrentY += baseSpacing * scale; // Space after Window Settings
+    tempCurrentY += baseSmallFontSize * scale; // Window Mode Text height (approximate)
+    tempCurrentY += baseLargeSpacing * scale; // Space after Window Mode
+    tempCurrentY += 10 * (baseSmallFontSize * scale + baseSpacing * scale); // Test options height
     
-    float totalContentHeight = tempCurrentY - startingContentY;
+    float totalContentHeight = tempCurrentY;
     maxScrollOffset = std::max(0.0f, totalContentHeight - contentAreaHeight);
 
     // Clamp scroll offset BEFORE calculating positions
@@ -261,19 +298,19 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     scrollOffset = std::max(minScrollOffset, std::min(scrollOffset, maxScrollOffset));
     
     // Now calculate positions with clamped scroll offset
-    float currentY = contentAreaTop - scrollOffset;
+    float currentY = contentAreaTop - scrollOffset; // Start content positioning
     
 
     //Window Settings Text (scrollable)
     sf::Text windowSettingsText{ edges };
-    windowSettingsText.setString("Window Settings (INOP)");
+    windowSettingsText.setString("Window Settings: (INOP)");
     windowSettingsText.setFillColor(sf::Color::White);
-    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.6f)); // Scale font size
+    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.5f)); // Scale font size
     const sf::FloatRect wstb = windowSettingsText.getLocalBounds();
     windowSettingsText.setOrigin(wstb.position + wstb.size / 2.0f);
     windowSettingsText.setPosition(sf::Vector2f(midX, currentY));
-    // Only draw if within visible area
-    if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
+    // Only draw if within strict visible area bounds
+    if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
         window.draw(windowSettingsText);
     }
     currentY += baseSpacing * scale; // Scale spacing between elements
@@ -287,8 +324,8 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     windowModeText.setOrigin(wmtb.position + wmtb.size / 2.0f);
     windowModeText.setPosition(sf::Vector2f(midX, currentY));
 
-    // Only draw if within visible area
-    if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
+    // Only draw if within strict visible area bounds
+    if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
         window.draw(windowModeText);
     }
     currentY += baseLargeSpacing * scale; // Scale spacing between elements
@@ -303,8 +340,8 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
         testText.setOrigin(ttb.position + ttb.size / 2.0f);
         testText.setPosition(sf::Vector2f(midX, currentY));
         
-        // Only draw if within visible area
-        if (currentY >= contentAreaTop && currentY <= contentAreaTop + contentAreaHeight) {
+        // Only draw if within strict visible area bounds
+        if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
             window.draw(testText);
         }
         currentY += baseSpacing * scale; // Scale spacing between elements
