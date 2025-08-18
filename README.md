@@ -51,11 +51,12 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 ----------------------------------------
 1. Clone the repository or download files from: https://github.com/jadonmat/AutoTCAS.git (You can directly clone in visual studio).
 
-      If you wish to contribute follow these steps in [Contributing](https://github.com/jadonmat/AutoTCAS/edit/master/README.md#-contributing).
+      If you wish to contribute follow these steps in [Contributing](https://github.com/jadonmat/AutoTCAS?tab=readme-ov-file#-contributing).
 
-2. Open the .sln file in Visual Studio 2022.
-3. Set the build configuration to Release and platform to x64.
-4. Build the solution (Build > Build Solution).
+
+3. Open the .sln file in Visual Studio 2022.
+4. Set the build configuration to Release and platform to x64.
+5. Build the solution (Build > Build Solution).
 
 ### 🔧 SFML Configuration
 
