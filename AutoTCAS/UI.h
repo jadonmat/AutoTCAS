@@ -9,72 +9,47 @@ public:
     // Class constructor
     UI();
     //Class member functions
-    //Fonts
+
     sf::Font getedgesFont() const;
+
     sf::Font getpixellariFont() const;
 
-    //SETTINGS text
-    sf::Text& getSettingsText();
-    //SETTINGS shape
-    sf::RectangleShape& getSettings();
-	//SETTINGS internal buttons
-	sf::Text& getSettingsHeader();
-	sf::RectangleShape& getExitButton();
-	sf::Text& getExitText();
-	sf::Text& getPauseText();
-	sf::Text& getWindowSettingsText();
-	sf::Text& getWindowModeText();
-	sf::Text& getFullscreenText();
-	sf::Text& getWindowedText();
+	sf::Text& getSettingsText(); // needed for events
 
-    //RESET
-    sf::Text& getResetButton();
+	sf::RectangleShape& getSettings(); // needed for events
 
-    //FPS
-    sf::Text& getFPSDisplay();
+	sf::RectangleShape& getExitButton(); // needed for events
 
-    //Click text
-    sf::Text& getClickText();
-    //Name text
-	sf::Text& getNameText();
+    sf::Text& getResetButton(); // needed for events
 
-    //Too close message
-    sf::Text& getTooCloseMessage();
 
-    //Update UI scaling and generate text shapes based on user resolution  
-    enum class TextType { Reset, FPS, Click, TooClose, Settings, name };
-    void TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) const;
 
-    //Initialize UI elements
-    void InitializeTextUI(sf::RenderWindow& window, UI& ui);
+    void GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt);
+
+	void GenerateFPS(sf::RenderWindow& window, UI& ui, sf::Time dt);
+
 	void GenerateSettingsMenu(sf::RenderWindow& window, UI& ui);
-    // Draw and/or animate UI elements
-    void DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui);
 
-    //////////////////////////////////////////////////////////////
+    void DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Public member variables (need to be accessed in main) (may want to make these private later and make getters)
+
+    //Fonts
+	sf::Font edges; // needed in events
+    sf::Font pixellari;
+
+
     bool showClickMessage;
     bool settingsMenuOpen;
-    sf::Font edges = getedgesFont();
+	sf::Text settingsText{ edges }; // needed in events
+	sf::RectangleShape settings; // needed in events
+	sf::RectangleShape exitButton; // needed in events
 
-	sf::Text settingsText{ edges };
-    sf::RectangleShape settings;
-    sf::RectangleShape exitButton;
-	sf::Text SettingsHeader{ edges };
-	sf::Text exitText{ edges };
-	sf::Text pauseText{ edges };
-	sf::Text WindowSettingsText{ edges };
-	sf::Text WindowModeText{ edges };
-	sf::Text FullscreenText{ edges };
-	sf::Text WindowedText{ edges };
 
-    sf::Text reset{ edges };
-    sf::Font pixellari = getpixellariFont();
-    sf::Text fpsText{ pixellari };
-	sf::Text nameText{ edges };
-    sf::Text clickText{ edges };
-    sf::Text TooClose{ edges };
+    sf::Text reset{ edges }; // Needed in events
 
+    // needed in events (move to events?)
     std::vector<sf::Text> tooCloseTexts;
     std::vector<float> tooCloseTimers;
     std::vector<float> tooCloseDurations;
@@ -87,10 +62,12 @@ public:
     // Scale constants
     static constexpr float MIN_SCALE = 0.4f;
     static constexpr float MAX_SCALE = 1.5f;
-	static constexpr float MAX_SCALE_FPS = 0.75f;
+	static constexpr float MAX_SCALE_FPS = 0.85f;
+    ///////////////////////////////////////////////////////////////////////////////////
 
 private:
     //Private member variables
+   
 
     //FPS display variables
     float frameTime;
@@ -106,4 +83,6 @@ private:
     float dotInterval;
     float dotTimer;
     int dotCount;
+
+    std::string currentFPSString;
 };

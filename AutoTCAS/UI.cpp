@@ -5,8 +5,6 @@
 using namespace std;
 
 UI::UI() {
-    //edges = getedgesFont();
-    //sf::Text reset{ edges };
     frameTime = 0.0f;
     frameCount = 0.0f;
     visibleChars = 0;
@@ -21,7 +19,9 @@ UI::UI() {
     scrollOffset = 0.0f;
     maxScrollOffset = 0.0f;
     scrollSpeed = 50.0f;
-
+    currentFPSString = "FPS: 0";
+    edges = getedgesFont();
+    pixellari = getpixellariFont();
 }
 
 
@@ -38,160 +38,128 @@ sf::Font UI::getpixellariFont() const {
 sf::Text& UI::getSettingsText() {
     return settingsText;
 }
+
 sf::RectangleShape& UI::getSettings() {
     return settings; 
 }
-sf::Text& UI::getSettingsHeader() {
-    return SettingsHeader; 
-}
+
 sf::RectangleShape& UI::getExitButton() {
     return exitButton; 
-}
-sf::Text& UI::getExitText() {
-    return exitText; 
-}
-sf::Text& UI::getPauseText() {
-    return pauseText; 
-}
-sf::Text& UI::getWindowSettingsText() {
-    return WindowSettingsText; 
-}
-sf::Text& UI::getWindowModeText() {
-    return WindowModeText; 
-}
-sf::Text& UI::getFullscreenText() {
-    return FullscreenText; 
-}
-sf::Text& UI::getWindowedText() {
-    return WindowedText; 
 }
 
 sf::Text& UI::getResetButton() {
     return reset; 
 }
 
-sf::Text& UI::getFPSDisplay() {
-    return fpsText; 
-}
-
-sf::Text& UI::getClickText() {
-    return clickText; 
-}
-
-sf::Text& UI::getNameText() {
-    return nameText; 
-}
-
-sf::Text& UI::getTooCloseMessage() {
-    return TooClose;
-}
-
-
-// handles differnet buttons with texttype
-void UI::TextUpdate(sf::Text& text, sf::RenderWindow& window, TextType type) const {
-    sf::Font font = getedgesFont();
-    
+void UI::GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt) {
     // Get current window size
     sf::Vector2u windowSize = window.getSize();
-    
+
     // Calculate scaling factors based on window size
     // Using 1440p as the base reference resolution
     float scaleX = static_cast<float>(windowSize.x) / 2560.0f;
     float scaleY = static_cast<float>(windowSize.y) / 1440.0f;
     float rawScale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
-    
+
+    // Clamp scale to minimum and maximum values
+    float scale = std::clamp(rawScale, MIN_SCALE, MAX_SCALE);
+
+    // Base character sizes
+    float baseCharacterSize = 50.0f;
+
+    // Calculate scaled sizes
+    float CharacterSize = baseCharacterSize * scale;
+
+    charTimer += dt.asSeconds();
+    if (visibleChars < fullClickMessage.size() && charTimer >= charInterval) {
+        ++visibleChars;
+        charTimer = 0.0f;
+    }
+
+    std::string displayText = fullClickMessage.substr(0, visibleChars);
+
+    if (visibleChars < fullClickMessage.size()) {
+        // always show an underscore at the end.
+        displayText += "_";
+    }
+    else {
+        // Full text is displayed; now animate a looping dot
+        dotTimer += dt.asSeconds();
+        if (dotTimer >= dotInterval) {
+            dotCount = (dotCount + 1) % 4; // cycle from 0 to 3
+            dotTimer = 0.0f;
+        }
+        std::string dots(static_cast<size_t>(dotCount), '.');
+        displayText += dots;
+    }
+    sf::Text clickText{ edges };
+    clickText.setString("Click");
+    clickText.setFillColor(sf::Color::White);
+    clickText.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.0f * scale));
+    clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
+    clickText.setString(displayText);
+    // Always set origin from the local bounds to keep it centered while the size inscreases
+    clickText.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
+
+    sf::Text nameText{ edges };
+    nameText.setString("Welcome to AutoTCAS");
+    nameText.setFillColor(sf::Color::White);
+    nameText.setCharacterSize(static_cast<unsigned int>(CharacterSize + 50.0f * scale));
+    sf::FloatRect boundsName = nameText.getLocalBounds();
+    sf::Vector2f centerName = boundsName.getCenter();
+    nameText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - centerName.x, static_cast<float>(window.getSize().y) / 2.0f - 200.0f * scale));
+
+    // draw a semi-transparent overlay.
+    sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
+    overlay.setFillColor(sf::Color(0, 0, 0, 128));
+
+
+
+    window.draw(overlay);
+    window.draw(clickText);
+    window.draw(nameText);
+
+}
+
+void UI::GenerateFPS(sf::RenderWindow& window, UI& ui, sf::Time dt) {
+    // Get current window size
+    sf::Vector2u windowSize = window.getSize();
+
+    // Calculate scaling factors based on window size
+    // Using 1440p as the base reference resolution
+    float scaleX = static_cast<float>(windowSize.x) / 2560.0f;
+    float scaleY = static_cast<float>(windowSize.y) / 1440.0f;
+    float rawScale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+
     // Clamp scale to minimum and maximum values
     float scale = std::clamp(rawScale, MIN_SCALE, MAX_SCALE);
     float scale_fps = std::clamp(rawScale, MIN_SCALE, MAX_SCALE_FPS);
-    
+
     // Base character sizes
-    float baseCharacterSize = 50.0f;
     float baseFPSSize = 30.0f;
-    float baseTooCloseSize = 8.0f;
-    
+
     // Calculate scaled sizes
-    float CharacterSize = baseCharacterSize * scale;
     float CharacterSizeFPS = baseFPSSize * scale_fps;
-    float TooCloseCharacterSize = baseTooCloseSize; //* scale;
-    
-    float resetdiff = 10.0f * scale; // Scale the offset too
-    
-    if (type == TextType::Reset) {
-        text.setString("RESET");
-        text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize));
-        sf::FloatRect bounds = text.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 70.0f * scale));
+
+    // Update FPS calculation
+    frameTime += dt.asSeconds();
+    frameCount++;
+    if (frameTime >= 1.0f) {
+        float fps = frameCount / frameTime;
+        currentFPSString = "FPS: " + std::to_string(static_cast<int>(fps));
+        frameTime = 0.0f;
+        frameCount = 0.0f;
     }
-    else if(type == TextType::Settings) {
-        text.setString("SETTINGS");
-        text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize));
-        sf::FloatRect bounds = text.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f * scale));
-    }
-    else if (type == TextType::FPS) {
-        text.setFillColor(sf::Color::Green);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSizeFPS));
-        text.setPosition(sf::Vector2f(10.0f * scale, 5.0f * scale));
-    }
-    else if (type == TextType::Click) {
-        text.setString("Click");
-        text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.0f * scale));
-        sf::FloatRect bounds = text.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
-    }
-    else if (type == TextType::name) {
-        text.setString("Welcome to AutoTCAS");
-        text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(CharacterSize + 50.0f * scale));
-        sf::FloatRect bounds = text.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        text.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - 200.0f * scale));
-    }
-    else if (type == TextType::TooClose) {
-        text.setString("TOO CLOSE");
-        text.setFillColor(sf::Color::White);
-        text.setCharacterSize(static_cast<unsigned int>(TooCloseCharacterSize));
-        sf::FloatRect bounds = text.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-    }
-    else {
-        //cout << "ERROR: TextUpdate type does not match up" << endl;
-    }
+
+    // Create and draw FPS text using the stored string
+    sf::Text fpsText{ pixellari };
+    fpsText.setString(currentFPSString);
+    fpsText.setFillColor(sf::Color::Green);
+    fpsText.setCharacterSize(static_cast<unsigned int>(CharacterSizeFPS));
+    fpsText.setPosition(sf::Vector2f(10.0f * scale, 5.0f * scale));
+    window.draw(fpsText);
 }
 
-
-
-void UI::InitializeTextUI(sf::RenderWindow& window, UI& ui) {
-    //SETTINGS Text
-    sf::Text& settingstext = ui.getSettingsText();
-	ui.TextUpdate(settingstext, window, UI::TextType::Settings);
-
-    // Reset BUTTON 
-    sf::Text& reset = ui.getResetButton();
-    ui.TextUpdate(reset, window, UI::TextType::Reset);
-
-    //FPS display
-    sf::Text& fpsText = ui.getFPSDisplay();
-    ui.TextUpdate(fpsText, window, UI::TextType::FPS);
-
-    // Clicktext display
-    sf::Text& clickText = ui.getClickText();
-    ui.TextUpdate(clickText, window, UI::TextType::Click);
-	// nameText display
-	sf::Text& nameText = ui.getNameText();
-	ui.TextUpdate(nameText, window, UI::TextType::name);
-
-    //Too close display
-	sf::Text& tooCloseText = ui.getClickText();
-	ui.TextUpdate(tooCloseText, window, UI::TextType::TooClose);
-
-}
 
 void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     // Get current window size
@@ -218,10 +186,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
 
     //SETTINGS SHAPE
     sf::RectangleShape& settings = ui.getSettings();
-    settings.setSize(sf::Vector2f(
-        static_cast<float>(window.getSize().x) - baseMenuWidth * scale, 
-        static_cast<float>(window.getSize().y) - baseMenuHeight * scale
-    ));
+    settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - baseMenuWidth * scale, static_cast<float>(window.getSize().y) - baseMenuHeight * scale));
     settings.setFillColor(sf::Color(50, 50, 50, 100));
     settings.setOutlineColor(sf::Color::White);
     settings.setOutlineThickness(0.5f * scale);
@@ -243,7 +208,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     window.draw(exitButton);
     
     // Exit Text (fixed position)
-    sf::Text& exitText = ui.getExitText();
+    sf::Text exitText{ edges };
     exitText.setString("X");
     exitText.setFillColor(sf::Color::White);
     exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.9f));
@@ -256,7 +221,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     window.draw(exitText);
 
     // Pause Text (fixed position)
-    sf::Text& pauseText = ui.getPauseText();
+    sf::Text pauseText{ edges };
     pauseText.setString("**PAUSED**");
     pauseText.setFillColor(sf::Color::White);
     pauseText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale));
@@ -290,7 +255,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     float currentY = contentAreaTop - scrollOffset;
     
     //Window Settings Text (scrollable)
-    sf::Text& windowSettingsText = ui.getWindowSettingsText();
+    sf::Text windowSettingsText{ edges };
     windowSettingsText.setString("Window Settings (INOP)");
     windowSettingsText.setFillColor(sf::Color::White);
     windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.5f)); // Scale font size
@@ -304,7 +269,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     currentY += baseSpacing * scale; // Scale spacing between elements
     
     // WINDOW MODE TEXT (scrollable)
-    sf::Text& windowModeText = ui.getWindowModeText();
+    sf::Text windowModeText{ edges };
     windowModeText.setString("Current Window Mode: ");
     windowModeText.setFillColor(sf::Color::White);
     windowModeText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale)); // Scale font size
@@ -336,80 +301,73 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     }
 }
 
-void UI::DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui) {
-	//Settings
-    if(!ui.showClickMessage) {
-        ui.TextUpdate(ui.settingsText, window, TextType::Settings);
-        window.draw(ui.settingsText);
-	}
+void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui) {
+    // Get current window size
+    sf::Vector2u windowSize = window.getSize();
 
+    // Calculate scaling factors based on window size
+    // Using 1440p as the base reference resolution
+    float scaleX = static_cast<float>(windowSize.x) / 2560.0f;
+    float scaleY = static_cast<float>(windowSize.y) / 1440.0f;
+    float rawScale = std::min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+
+    // Clamp scale to minimum and maximum values
+    float scale = std::clamp(rawScale, MIN_SCALE, MAX_SCALE);
+    float scale_fps = std::clamp(rawScale, MIN_SCALE, MAX_SCALE_FPS);
+
+    // Base character sizes
+    float baseCharacterSize = 50.0f;
+    float baseFPSSize = 30.0f;
+    float baseTooCloseSize = 8.0f;
+
+    // Calculate scaled sizes
+    float CharacterSize = baseCharacterSize * scale;
+    float CharacterSizeFPS = baseFPSSize * scale_fps;
+    float TooCloseCharacterSize = baseTooCloseSize; //* scale;
+    
+    float resetdiff = 10.0f * scale; // Scale the offset too
+    
+
+    //SETTINGS
+    if(!ui.showClickMessage) {
+        sf::Text& settingstext = ui.getSettingsText();
+        settingstext.setString("SETTINGS");
+        settingstext.setFillColor(sf::Color::White);
+        settingstext.setCharacterSize(static_cast<unsigned int>(CharacterSize));
+        sf::FloatRect bounds = settingstext.getLocalBounds();
+        sf::Vector2f center = bounds.getCenter();
+        settingstext.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f * scale));
+        window.draw(settingsText);
+	}
     // Draw settings menu only if open
     if (ui.settingsMenuOpen) {
         ui.GenerateSettingsMenu(window, ui);
     }
 
-    // Reset Button
+
+	// RESET BUTTON
     if (!ui.showClickMessage) {
-        ui.TextUpdate(ui.reset, window, TextType::Reset);
-        window.draw(ui.reset);
+        sf::Text& reset = ui.getResetButton();
+        reset.setFont(edges);
+        reset.setString("RESET");
+        reset.setFillColor(sf::Color::White);
+        reset.setCharacterSize(static_cast<unsigned int>(CharacterSize));
+        sf::FloatRect bounds = reset.getLocalBounds();
+        sf::Vector2f center = bounds.getCenter();
+        reset.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 70.0f * scale));
+        window.draw(reset);
     }
 
-    //FPS display
-    frameTime += dt.asSeconds();
-    frameCount++;
-    if (frameTime >= 1.0f) {
-        float fps = frameCount / frameTime;
-        fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
-        frameTime = 0.0f;
-        frameCount = 0.0f;
-    }
+
+	// FPS DISPLAY
     if (!ui.showClickMessage) {
-        ui.TextUpdate(ui.fpsText, window, TextType::FPS);
-        window.draw(ui.fpsText);
+		GenerateFPS(window, ui, dt);
     }
 
 
-	//CLICK MESSAGE
+	//INTRO
     if (showClickMessage) {
-        charTimer += dt.asSeconds();
-        if (visibleChars < fullClickMessage.size() && charTimer >= charInterval) {
-            ++visibleChars;
-            charTimer = 0.0f;
-        }
-
-        std::string displayText = fullClickMessage.substr(0, visibleChars);
-
-        if (visibleChars < fullClickMessage.size()) {
-            // always show an underscore at the end.
-            displayText += "_";
-        }
-        else {
-            // Full text is displayed; now animate a looping dot
-            dotTimer += dt.asSeconds();
-            if (dotTimer >= dotInterval) {
-                dotCount = (dotCount + 1) % 4; // cycle from 0 to 3
-                dotTimer = 0.0f;
-            }
-            std::string dots(static_cast<size_t>(dotCount), '.');
-            displayText += dots;
-        }
-		ui.TextUpdate(ui.clickText, window, UI::TextType::Click);
-        clickText.setString(displayText);
-		// Always set origin from the local bounds to keep it centered while the size inscreases
-        clickText.setOrigin(clickText.getLocalBounds().position + clickText.getLocalBounds().size / 2.0f);
-
-
-		ui.TextUpdate(ui.nameText, window, UI::TextType::name);
-
-        // draw a semi-transparent overlay.
-        sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
-        overlay.setFillColor(sf::Color(0, 0, 0, 128));
-        
-        
-        
-        window.draw(overlay);
-        window.draw(clickText);
-		window.draw(nameText);
+		GenerateIntro(window, ui, dt);
     }
    
 
@@ -430,10 +388,12 @@ void UI::DrawAndOrAnimateText(sf::RenderWindow& window, sf::Time dt, UI& ui) {
     }
 
     for (size_t i = 0; i < tooCloseTexts.size(); ++i) {
-        ui.TextUpdate(tooCloseTexts[i], window, TextType::TooClose);
+        tooCloseTexts[i].setString("TOO CLOSE");
+        tooCloseTexts[i].setFillColor(sf::Color::White);
+        tooCloseTexts[i].setCharacterSize(static_cast<unsigned int>(TooCloseCharacterSize));
         sf::FloatRect bounds = tooCloseTexts[i].getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        tooCloseTexts[i].setPosition(sf::Vector2f(tooClosePositions[i].x - center.x, tooClosePositions[i].y - center.y));
+        sf::Vector2f centerClose = bounds.getCenter();
+        tooCloseTexts[i].setPosition(sf::Vector2f(tooClosePositions[i].x - centerClose.x, tooClosePositions[i].y - centerClose.y));
         
         window.draw(tooCloseTexts[i]);
     }

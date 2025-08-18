@@ -5,7 +5,7 @@ using namespace std;
 Events::Events() {}
 
 void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& clickText, sf::Text& fpsText, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton) {
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -99,10 +99,6 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
             //settings close behavior
             if (ui.settingsMenuOpen) {
                 if (exitButton.getGlobalBounds().contains(mousePos)) {
-                    ui.settingsMenuOpen = false;
-                }
-                // Close if clicking outside settings but not on other UI elements
-                else if (!settings.getGlobalBounds().contains(mousePos) && !reset.getGlobalBounds().contains(mousePos) && !settingsText.getGlobalBounds().contains(mousePos)) {
                     ui.settingsMenuOpen = false;
                 }
             }

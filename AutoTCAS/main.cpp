@@ -23,7 +23,6 @@ using namespace std;
 
         //INITIALIZE BUTTONS (USING UI CLASS)
         UI ui;
-		ui.InitializeTextUI(window.window, ui); // Initialize UI elements
 
         void start(); // starts time
         sf::Clock clock;
@@ -42,7 +41,7 @@ using namespace std;
 
         Events Events;
 		// Handle events in event class
-		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui,  ui.clickText, ui.fpsText, ui.reset, ui.settingsText, ui.settings, ui.exitButton);
+		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui, ui.reset, ui.settingsText, ui.settings, ui.exitButton);
 
 
         // Only update simulation if settings menu is not open (PAUSE FUNCTIONALITY)
@@ -75,7 +74,7 @@ using namespace std;
             }
         }
 	        
-		ui.DrawAndOrAnimateText(window.window, dt, ui); // Draws and animates UI elements
+		ui.DrawUI(window.window, dt, ui); // Draws and animates UI elements
 
 		window.window.display(); //Displays all the drawn shapes and text
 
