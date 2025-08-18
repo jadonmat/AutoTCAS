@@ -95,7 +95,7 @@ void UI::GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt) {
     sf::Text clickText{ edges };
     clickText.setString("Click");
     clickText.setFillColor(sf::Color::White);
-    clickText.setCharacterSize(static_cast<unsigned int>(CharacterSize + 15.0f * scale));
+    clickText.setCharacterSize(static_cast<unsigned int>(CharacterSize + 10.0f * scale));
     clickText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
     clickText.setString(displayText);
     // Always set origin from the local bounds to keep it centered while the size inscreases
@@ -107,7 +107,7 @@ void UI::GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt) {
     nameText.setCharacterSize(static_cast<unsigned int>(CharacterSize + 50.0f * scale));
     sf::FloatRect boundsName = nameText.getLocalBounds();
     sf::Vector2f centerName = boundsName.getCenter();
-    nameText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - centerName.x, static_cast<float>(window.getSize().y) / 2.0f - 200.0f * scale));
+    nameText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - centerName.x, static_cast<float>(window.getSize().y) / 2.0f - 300.0f * scale));
 
     // draw a semi-transparent overlay.
     sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
@@ -173,6 +173,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     
     // Clamp scale to minimum and maximum values
     float scale = std::clamp(rawScale, MIN_SCALE, MAX_SCALE);
+	float scale_settings = std::clamp(rawScale, MIN_SCALE, MAX_SCALE_SETTINGS);
 
     // Base sizes for scaling
     float baseMenuWidth = 1500.0f;
@@ -184,27 +185,28 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     float baseFontSize = 100.0f;
     float baseSmallFontSize = 30.0f;
 
-    //SETTINGS SHAPE
+    //SETTINGS SHAPE - Calculate proposed size first
+    float proposedWidth = static_cast<float>(window.getSize().x) - baseMenuWidth * scale * 0.75f;
+    float proposedHeight = static_cast<float>(window.getSize().y) - baseMenuHeight * scale * 0.75f;
+    
+    // Apply maximum size constraints
+    float finalWidth = std::min(proposedWidth, MAX_SETTINGS_WIDTH);
+    //float finalHeight = std::min(proposedHeight, MAX_SETTINGS_HEIGHT);
+    
     sf::RectangleShape& settings = ui.getSettings();
-    settings.setSize(sf::Vector2f(static_cast<float>(window.getSize().x) - baseMenuWidth * scale, static_cast<float>(window.getSize().y) - baseMenuHeight * scale));
-    settings.setFillColor(sf::Color(50, 50, 50, 100));
+    settings.setSize(sf::Vector2f(finalWidth, proposedHeight));
+    settings.setFillColor(sf::Color(50, 50, 50, 150));
     settings.setOutlineColor(sf::Color::White);
     settings.setOutlineThickness(0.5f * scale);
     sf::Vector2f center = settings.getGeometricCenter();
-    settings.setPosition(sf::Vector2f(
-        static_cast<float>(window.getSize().x) / 2.0f - center.x, 
-        static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f * scale
-    ));
+    settings.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f - center.x, static_cast<float>(window.getSize().y) / 2.0f - center.y + 25.0f * scale));
     window.draw(settings);
     
     // Exit Button (fixed position - doesn't scroll)
     sf::RectangleShape& exitButton = ui.getExitButton();
     exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.075f, settings.getSize().y * 0.075f));
     exitButton.setFillColor(sf::Color(200, 0, 0));
-    exitButton.setPosition(sf::Vector2f(
-        settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f * scale, 
-        settings.getGlobalBounds().position.y + 5.0f * scale
-    ));
+    exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f * scale, settings.getGlobalBounds().position.y + 5.0f * scale));
     window.draw(exitButton);
     
     // Exit Text (fixed position)
@@ -214,10 +216,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     exitText.setCharacterSize(static_cast<unsigned int>(exitButton.getSize().y * 0.9f));
     const sf::FloatRect tb = exitText.getLocalBounds();
     exitText.setOrigin(tb.position + tb.size / 2.0f);
-    exitText.setPosition(sf::Vector2f(
-        exitButton.getPosition().x + exitButton.getSize().x * 0.5f, 
-        exitButton.getPosition().y + exitButton.getSize().y * 0.5f
-    ));
+    exitText.setPosition(sf::Vector2f(exitButton.getPosition().x + exitButton.getSize().x * 0.5f, exitButton.getPosition().y + exitButton.getSize().y * 0.5f));
     window.draw(exitText);
 
     // Pause Text (fixed position)
@@ -232,6 +231,16 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     const float midX = settings.getPosition().x + settings.getSize().x * 0.5f;
     pauseText.setPosition(sf::Vector2f(midX, midY));
     window.draw(pauseText);
+
+    // Settings Title Text (fixed position)
+    sf::Text settingsTitle{ edges };
+    settingsTitle.setString("SETTINGS MENU");
+    settingsTitle.setFillColor(sf::Color::White);
+    settingsTitle.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 1.5f));
+    const sf::FloatRect stb = settingsTitle.getLocalBounds();
+    settingsTitle.setOrigin(stb.position + stb.size / 2.0f);
+    settingsTitle.setPosition(sf::Vector2f(midX, settings.getPosition().y + baseHeaderOffset * scale));
+    //window.draw(settingsTitle);
 
     // SCROLLABLE CONTENT
     float contentAreaTop = exitButton.getGlobalBounds().position.y + baseHeaderOffset * scale; // Scale header offset
@@ -254,11 +263,12 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     // Now calculate positions with clamped scroll offset
     float currentY = contentAreaTop - scrollOffset;
     
+
     //Window Settings Text (scrollable)
     sf::Text windowSettingsText{ edges };
     windowSettingsText.setString("Window Settings (INOP)");
     windowSettingsText.setFillColor(sf::Color::White);
-    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.5f)); // Scale font size
+    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.6f)); // Scale font size
     const sf::FloatRect wstb = windowSettingsText.getLocalBounds();
     windowSettingsText.setOrigin(wstb.position + wstb.size / 2.0f);
     windowSettingsText.setPosition(sf::Vector2f(midX, currentY));

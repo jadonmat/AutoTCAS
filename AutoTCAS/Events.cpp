@@ -109,13 +109,30 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
         // AUTO RESIZE EVENT
         else if (const auto* resized = event->getIf<sf::Event::Resized>())
         {
+            // Enforce minimum window size
+            sf::Vector2u newSize = resized->size;
+            bool needsResize = false;
+            
+            if (newSize.x < Window::MIN_WIDTH) {
+                newSize.x = Window::MIN_WIDTH;
+                needsResize = true;
+            }
+            if (newSize.y < Window::MIN_HEIGHT) {
+                newSize.y = Window::MIN_HEIGHT;
+                needsResize = true;
+            }
+            
+            if (needsResize) {
+                window.setSize(newSize);
+            }
+
             // update the view to the new size of the window
-            sf::FloatRect visibleArea({ 0.0f, 0.0f }, sf::Vector2f(static_cast<float>(resized->size.x), static_cast<float>(resized->size.y)));
+            sf::FloatRect visibleArea({ 0.0f, 0.0f }, sf::Vector2f(static_cast<float>(newSize.x), static_cast<float>(newSize.y)));
             window.setView(sf::View(visibleArea));
 
 
             // Clamp all aircraft positions to new window boundaries
-            sf::Vector2f windowSize(static_cast<float>(resized->size.x), static_cast<float>(resized->size.y));
+            sf::Vector2f windowSize(static_cast<float>(newSize.x), static_cast<float>(newSize.y));
             for (size_t i = 0; i < aircrafts.size(); ++i) {
                 sf::Vector2f pos = aircrafts[i]->getPosition();
                 // Clamp x and y to keep aircraft within bounds

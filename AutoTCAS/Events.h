@@ -1,15 +1,16 @@
 #pragma once
-#include "UI.h"
+#include <SFML/Graphics.hpp>
+#include <vector>
 #include "Aircraft.h"
 #include "A380.h"
+#include "UI.h"
+#include "Window.h"
 
 class Events {
 public:
 	Events();
-	// Function to handle events
-	void handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-		std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingstext, sf::RectangleShape& Settings, sf::RectangleShape& exitButton);
 
-	sf::Vector2f mousePos;
-private:
+	void handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
+		std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton);
+
 };

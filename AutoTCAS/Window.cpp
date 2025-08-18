@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 Window::Window() {}
@@ -31,4 +32,24 @@ void Window::WindowGeneration(int framerate, int antialiasing, int state) {
     }
 
     window.setFramerateLimit(framerate);
+}
+
+void Window::MinimumSize() {
+    sf::Vector2u currentSize = window.getSize();
+    sf::Vector2u newSize = currentSize;
+    
+    // Ensure width is at least minimum
+    if (currentSize.x < MIN_WIDTH) {
+        newSize.x = MIN_WIDTH;
+    }
+    
+    // Ensure height is at least minimum
+    if (currentSize.y < MIN_HEIGHT) {
+        newSize.y = MIN_HEIGHT;
+    }
+    
+    // Only resize if we need to
+    if (newSize != currentSize) {
+        window.setSize(newSize);
+    }
 }
