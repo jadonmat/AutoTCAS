@@ -50,6 +50,9 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 **For Those Building From Source Files**
 ----------------------------------------
 1. Clone the repository or download files from: https://github.com/jadonmat/AutoTCAS.git (You can directly clone in visual studio).
+
+      If you wish to contribute follow these steps in [Contributing](https://github.com/jadonmat/AutoTCAS/edit/master/README.md#-contributing).
+
 2. Open the .sln file in Visual Studio 2022.
 3. Set the build configuration to Release and platform to x64.
 4. Build the solution (Build > Build Solution).
@@ -121,7 +124,15 @@ If you encounter linking issues:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
+Contributions are welcome! Please feel free to submit issues and/or feature requests.
+
+If you want to directly contribute:
+1. Fork the repository.
+2. Clone your fork.
+3. Create a new branch seperate from master branch.
+4. Make and commit changes.
+5. Push changes to Github.
+6. Create a pull request, please write a description explaining your changes between your branch and the master branch.
 
 
 ## 📄 License
