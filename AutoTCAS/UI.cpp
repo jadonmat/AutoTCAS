@@ -191,8 +191,8 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     // When window is narrow, limit the height more aggressively
     float dynamicMaxHeight = std::min(MAX_SETTINGS_HEIGHT, static_cast<float>(windowSize.x) * 0.5f);
     
-    // Apply max size constraints
-    float finalWidth = std::min(proposedWidth, MAX_SETTINGS_WIDTH);
+    // Apply min and max size constraints for width
+    float finalWidth = std::clamp(proposedWidth, MIN_SETTINGS_WIDTH, MAX_SETTINGS_WIDTH);
 	float finalHeight = std::min(proposedHeight, dynamicMaxHeight);
     
     sf::RectangleShape& settings = ui.getSettings();
@@ -206,12 +206,12 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     
     // Exit Button (fixed position - doesn't scroll)
     sf::RectangleShape& exitButton = ui.getExitButton();
-    exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.085f, settings.getSize().y * 0.085f));
+    exitButton.setSize(sf::Vector2f(settings.getSize().x * 0.075f, settings.getSize().y * 0.075f));
     exitButton.setFillColor(sf::Color(200, 0, 0));
     exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f * scale, settings.getGlobalBounds().position.y + 5.0f * scale));
     
     // Calculate header height based on exit button position
-    float headerHeight = exitButton.getGlobalBounds().position.y + exitButton.getGlobalBounds().size.y - settings.getGlobalBounds().position.y + 10.0f * scale;
+    float headerHeight = exitButton.getGlobalBounds().position.y + exitButton.getGlobalBounds().size.y - settings.getGlobalBounds().position.y + 30.0f * scale;
     
     // Header background (fixed position)
     sf::RectangleShape header;

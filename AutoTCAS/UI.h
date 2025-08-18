@@ -64,6 +64,7 @@ public:
     static constexpr float MAX_SCALE = 1.5f;
 	static constexpr float MAX_SCALE_FPS = 0.85f;
 	static constexpr float MAX_SCALE_SETTINGS = 0.5f; // For settings menu scaling
+    static constexpr float MIN_SETTINGS_WIDTH = 400.0f;  // Minimum settings menu width
     static constexpr float MAX_SETTINGS_WIDTH = 1300.0f;
     static constexpr float MAX_SETTINGS_HEIGHT = 1000.0f;
     ///////////////////////////////////////////////////////////////////////////////////
