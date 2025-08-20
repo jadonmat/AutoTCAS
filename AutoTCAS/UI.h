@@ -40,8 +40,9 @@ public:
     sf::Font pixellari;
 
 
-    bool showClickMessage;
-    bool settingsMenuOpen;
+	bool showClickMessage; // needed in events
+	bool settingsMenuOpen; // needed in events
+	bool resetButtonPressed;// needed in events
 	sf::Text settingsText{ edges }; // needed in events
 	sf::RectangleShape settings; // needed in events
 	sf::RectangleShape exitButton; // needed in events
@@ -72,6 +73,10 @@ public:
 private:
     //Private member variables
    
+	//Reset Text variables
+    float resetTextTimer;
+    float resetTextDuration;
+    bool showResetText;
 
     //FPS display variables
     float frameTime;

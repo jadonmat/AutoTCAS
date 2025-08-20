@@ -20,6 +20,10 @@ UI::UI() {
     maxScrollOffset = 0.0f;
     scrollSpeed = 50.0f;
     currentFPSString = "FPS: 0";
+    resetTextTimer = 0.0f;
+    resetTextDuration = 2.0f;
+    showResetText = false;
+    resetButtonPressed = false;
     edges = getedgesFont();
     pixellari = getpixellariFont();
 }
@@ -392,7 +396,7 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui) {
     }
 
 
-	// RESET BUTTON
+    // RESET BUTTON
     if (!ui.showClickMessage) {
         sf::Text& reset = ui.getResetButton();
         reset.setFont(edges);
@@ -403,6 +407,32 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui) {
         sf::Vector2f center = bounds.getCenter();
         reset.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 70.0f * scale));
         window.draw(reset);
+
+        // Start the reset text timer when button is pressed
+        if (ui.resetButtonPressed) {
+            ui.showResetText = true;
+            ui.resetTextTimer = 0.0f;
+            ui.resetButtonPressed = false; // Reset the button state immediately
+        }
+
+        // Update and display reset text if active
+        if (ui.showResetText) {
+            ui.resetTextTimer += dt.asSeconds();
+
+            if (ui.resetTextTimer >= ui.resetTextDuration) {
+                ui.showResetText = false; // Hide the text after duration
+            }
+            else {
+                sf::Text resetText{ edges };
+                resetText.setString("All aircraft deleted");
+                resetText.setFillColor(sf::Color::White);
+                resetText.setCharacterSize(static_cast<unsigned int>(CharacterSize * 3.0f));
+                sf::FloatRect rtb = resetText.getLocalBounds();
+                resetText.setOrigin(rtb.position + rtb.size / 2.0f);
+                resetText.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f));
+                window.draw(resetText);
+            }
+        }
     }
 
 

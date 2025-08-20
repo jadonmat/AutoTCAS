@@ -84,6 +84,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                 //std::cout << "the left button was pressed" << std::endl;
                 aircrafts.clear();
                 aircraftShapes.clear();
+				ui.resetButtonPressed = true;
                 std::cout << "Reset Button pressed" << endl;
                 std::cout << "All Aircraft Deleted" << endl;
             }
