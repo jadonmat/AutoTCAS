@@ -2,7 +2,7 @@
 
 # ✈️ AutoTCAS - Traffic Collision Avoidance System Simulator
 
-![Release Version](https://img.shields.io/badge/Release_Version-1.1.6-blue.svg)
+![Release Version](https://img.shields.io/badge/Release_Version-1.2.0-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%2B-lightgrey.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-x64-green.svg)
 ![Language](https://img.shields.io/badge/C%2B%2B-17-00599C.svg?logo=c%2B%2B)
@@ -42,7 +42,7 @@ Dependencies: Visual C++ Redistributable for Visual Studio 2022 (for 64-bit)
 
 **Known Issues**
 ---------------- 
-1. If the user's desktop resolution is not one of the ones manually defined in the code, they will receive an error message that they are unable to run the program. This is due to a lack of resolution scaling in SFML's render window. For now the user can change their desktop resolution in the windows display settings to one of the ones stated in the error message. A solution for this is planned to be implemented in version 1.2.0.
+On higher resolution displays (for example 4k) aircrafts and too close messages will appear small. They are not being scaled with increasing resolution and are by default modeled on 1440p. If the aircrafts were to be scaled all distances would become smaller/larger depending on user resolution and would mess up the visual aspect during avoidance detection. In version 1.4.0 a solution will be implemented in which users will be able to zoom in/out fixing the issue without having to implement a solution to scale distances and speeds.
 
 
 
@@ -113,7 +113,7 @@ If you encounter linking issues:
   
 ## 🚀Feature Roadmap (Subject to change)
 - ~~**v1.1.0** - Add seperate warning and collision detections. Redsign advoidance to focus on closet aircraft. More realistic flight physics.~~
-- **v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI, reset notification.
+- ~~**v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI, reset notification.~~
 - **v1.3.0** - TCAS audio, right click to delete aircraft, hover to view aircraft info.
 - **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft.
 - **v1.5.0** - Animated ailerons, aircraft collisions
