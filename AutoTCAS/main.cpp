@@ -41,7 +41,7 @@ using namespace std;
 
         Events Events;
 		// Handle events in event class
-		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui, ui.reset, ui.settingsText, ui.settings, ui.exitButton);
+		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui, ui.reset, ui.settingsText, ui.settings, ui.exitButton, window);
 
 
         // Only update simulation if settings menu is not open (PAUSE FUNCTIONALITY)
@@ -74,7 +74,7 @@ using namespace std;
             }
         }
 	        
-		ui.DrawUI(window.window, dt, ui); // Draws and animates UI elements
+		ui.DrawUI(window.window, dt, ui, window); // Draws and animates UI elements - now passing the window object
 
 		window.window.display(); //Displays all the drawn shapes and text
 

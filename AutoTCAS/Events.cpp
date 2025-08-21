@@ -5,7 +5,7 @@ using namespace std;
 Events::Events() {}
 
 void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton) {
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton, const Window& windowObj) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -92,7 +92,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
             // SETTINGS BUTTON
             if (settingsText.getGlobalBounds().contains(mousePos)) {
                 if (!ui.settingsMenuOpen) {
-                    ui.GenerateSettingsMenu(window, ui);
+                    ui.GenerateSettingsMenu(window, ui, windowObj);
                     ui.settingsMenuOpen = true;
                 }
             }

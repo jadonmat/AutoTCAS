@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 //#include "Aircraft.h"
+class Window; // Forward declaration
 using namespace std;
 
 class UI {
@@ -28,9 +29,9 @@ public:
 
 	void GenerateFPS(sf::RenderWindow& window, UI& ui, sf::Time dt);
 
-	void GenerateSettingsMenu(sf::RenderWindow& window, UI& ui);
+	void GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& windowObj);
 
-    void DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui);
+    void DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& windowObj);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Public member variables (need to be accessed in main) (may want to make these private later and make getters)

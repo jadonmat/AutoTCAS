@@ -25,13 +25,19 @@ void Window::WindowGeneration(int framerate, int antialiasing, int state) {
 
     settings.antiAliasingLevel = antialiasing; // Try 2, 4, or 8 (higher = smoother, but more performance cost)
     if (state == 0) {
-    window.create(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
+        window.create(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
+        isFullscreen = false;
     }
     else if (state == 1) {
-    window.create(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default, sf::State::Fullscreen, settings);
+        window.create(sf::VideoMode({ 1250,750 }), "AutoTCAS", sf::Style::Default, sf::State::Fullscreen, settings);
+        isFullscreen = true;
     }
 
     window.setFramerateLimit(framerate);
+}
+
+std::string Window::getCurrentWindowModeString() const {
+    return isFullscreen ? "Fullscreen" : "Windowed";
 }
 
 void Window::MinimumSize() {

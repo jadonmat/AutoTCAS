@@ -11,6 +11,6 @@ public:
 	Events();
 
 	void handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-		std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton);
+		std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton, const Window& windowObj);
 
 };

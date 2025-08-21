@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "UI.h"
+#include "Window.h"
 using namespace std;
 
 UI::UI() {
@@ -165,7 +166,7 @@ void UI::GenerateFPS(sf::RenderWindow& window, UI& ui, sf::Time dt) {
 }
 
 
-void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
+void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& windowObj) {
     // Get current window size
     sf::Vector2u windowSize = window.getSize();
 
@@ -215,7 +216,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     exitButton.setPosition(sf::Vector2f(settings.getGlobalBounds().position.x + settings.getGlobalBounds().size.x - exitButton.getSize().x - 5.0f * scale, settings.getGlobalBounds().position.y + 5.0f * scale));
     
     // Calculate header height based on exit button position
-    float headerHeight = exitButton.getGlobalBounds().position.y + exitButton.getGlobalBounds().size.y - settings.getGlobalBounds().position.y + 30.0f * scale;
+    float headerHeight = exitButton.getGlobalBounds().position.y + exitButton.getGlobalBounds().size.y - settings.getGlobalBounds().position.y + 40.0f * scale;
     
     // Header background (fixed position)
     sf::RectangleShape header;
@@ -309,7 +310,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     sf::Text windowSettingsText{ edges };
     windowSettingsText.setString("Window Settings: (INOP)");
     windowSettingsText.setFillColor(sf::Color::White);
-    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.5f)); // Scale font size
+    windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.60f)); // Scale font size
     const sf::FloatRect wstb = windowSettingsText.getLocalBounds();
     windowSettingsText.setOrigin(wstb.position + wstb.size / 2.0f);
     windowSettingsText.setPosition(sf::Vector2f(midX, currentY));
@@ -319,9 +320,10 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     }
     currentY += baseSpacing * scale; // Scale spacing between elements
     
-    // WINDOW MODE TEXT (scrollable)
+    // WINDOW MODE TEXT (scrollable) - Updated to show actual window mode
     sf::Text windowModeText{ edges };
-    windowModeText.setString("Current Window Mode: ");
+    std::string windowModeString = "Current Window Mode: " + windowObj.getCurrentWindowModeString();
+    windowModeText.setString(windowModeString);
     windowModeText.setFillColor(sf::Color::White);
     windowModeText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale)); // Scale font size
     const sf::FloatRect wmtb = windowModeText.getLocalBounds();
@@ -333,6 +335,35 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
         window.draw(windowModeText);
     }
     currentY += baseLargeSpacing * scale; // Scale spacing between elements
+
+	sf::Text graphicsSettingsText{ edges };
+	graphicsSettingsText.setString("Graphics Settings: (INOP)");
+	graphicsSettingsText.setFillColor(sf::Color::White);
+	graphicsSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.6f)); // Scale font size
+	const sf::FloatRect gstb = graphicsSettingsText.getLocalBounds();
+	graphicsSettingsText.setOrigin(gstb.position + gstb.size / 2.0f);
+	graphicsSettingsText.setPosition(sf::Vector2f(midX, currentY));
+
+	// Only draw if within strict visible area bounds
+	if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
+		window.draw(graphicsSettingsText);
+	}
+	currentY += baseLargeSpacing * scale; // Scale spacing between elements
+
+	sf::Text UtilitiesSettingsText{ edges };
+	UtilitiesSettingsText.setString("Utilities Settings: (INOP)");
+	UtilitiesSettingsText.setFillColor(sf::Color::White);
+	UtilitiesSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.6f)); // Scale font size
+	const sf::FloatRect ustb = UtilitiesSettingsText.getLocalBounds();
+	UtilitiesSettingsText.setOrigin(ustb.position + ustb.size / 2.0f);
+	UtilitiesSettingsText.setPosition(sf::Vector2f(midX, currentY));
+	// Only draw if within strict visible area bounds
+	if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
+		window.draw(UtilitiesSettingsText);
+	}
+	currentY += baseLargeSpacing * scale; // Scale spacing between elements
+
+
 
     // Add more content to test scrolling
     for (int i = 0; i < 10; ++i) {
@@ -352,7 +383,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui) {
     }
 }
 
-void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui) {
+void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& windowObj) {
     // Get current window size
     sf::Vector2u windowSize = window.getSize();
 
@@ -392,7 +423,7 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui) {
 	}
     // Draw settings menu only if open
     if (ui.settingsMenuOpen) {
-        ui.GenerateSettingsMenu(window, ui);
+        ui.GenerateSettingsMenu(window, ui, windowObj);
     }
 
 

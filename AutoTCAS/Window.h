@@ -7,6 +7,9 @@ public:
 
 	void WindowGeneration(int FrameRate, int antialiasing, int state);
 	void MinimumSize();
+	
+	// Method to get current window mode as string
+	std::string getCurrentWindowModeString() const;
 
 	// Add minimum size constants
 	static constexpr unsigned int MIN_WIDTH = 800;
