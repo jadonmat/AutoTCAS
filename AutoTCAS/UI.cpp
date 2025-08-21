@@ -56,6 +56,14 @@ sf::Text& UI::getResetButton() {
     return reset; 
 }
 
+sf::RectangleShape& UI::getWindowedButton() {
+    return windowedButton;
+}
+
+sf::RectangleShape& UI::getFullscreenButton() {
+    return fullscreenButton;
+}
+
 void UI::GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt) {
     // Get current window size
     sf::Vector2u windowSize = window.getSize();
@@ -188,6 +196,9 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& wi
 	float baseMargin = 120.0f; // Margin for the settings menu
 	float baseFontSize = 80.0f; // Base font size for text
 	float baseSmallFontSize = 30.0f; // Base font size for smaller text (sub sections)
+    float baseButtonWidth = 200.0f; // Base button width
+    float baseButtonHeight = 50.0f; // Base button height
+    float baseButtonSpacing = 40.0f; // Base spacing between buttons
 
     //SETTINGS SHAPE - Calculate proposed size first
     float proposedWidth = static_cast<float>(window.getSize().x) - baseMenuWidth * scale * 0.75f;
@@ -292,7 +303,9 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& wi
     tempCurrentY += baseSpacing * scale; // Window Settings Text height
     tempCurrentY += baseSpacing * scale; // Space after Window Settings
     tempCurrentY += baseSmallFontSize * scale; // Window Mode Text height (approximate)
-    tempCurrentY += baseLargeSpacing * scale; // Space after Window Mode
+    tempCurrentY += baseSpacing * scale; // Space after Window Mode
+    tempCurrentY += baseButtonHeight * scale; // Button height
+    tempCurrentY += baseLargeSpacing * scale; // Space after buttons
     tempCurrentY += 10 * (baseSmallFontSize * scale + baseSpacing * scale); // Test options height
     
     float totalContentHeight = tempCurrentY;
@@ -308,7 +321,7 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& wi
 
     //Window Settings Text (scrollable)
     sf::Text windowSettingsText{ edges };
-    windowSettingsText.setString("Window Settings: (INOP)");
+    windowSettingsText.setString("Window Settings:");
     windowSettingsText.setFillColor(sf::Color::White);
     windowSettingsText.setCharacterSize(static_cast<unsigned int>(baseFontSize * scale * 0.60f)); // Scale font size
     const sf::FloatRect wstb = windowSettingsText.getLocalBounds();
@@ -334,6 +347,74 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& wi
     if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
         window.draw(windowModeText);
     }
+    currentY += baseSpacing * scale; // Scale spacing between elements
+
+    // Window Mode Buttons (scrollable)
+    float buttonWidth = baseButtonWidth * scale;
+    float buttonHeight = baseButtonHeight * scale;
+    float buttonSpacing = baseButtonSpacing * scale;
+    
+    // Calculate positions for side-by-side buttons
+    float totalButtonWidth = (buttonWidth * 2) + buttonSpacing;
+    float leftButtonX = midX - (totalButtonWidth / 2.0f);
+    float rightButtonX = leftButtonX + buttonWidth + buttonSpacing;
+
+    // Windowed Button
+    sf::RectangleShape& windowedButton = ui.getWindowedButton();
+    windowedButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    // Highlight current mode
+    if (!windowObj.isFullscreen) {
+        windowedButton.setFillColor(sf::Color(0, 150, 0)); // Green for active
+    } else {
+        windowedButton.setFillColor(sf::Color(100, 100, 100)); // Gray for inactive
+    }
+    windowedButton.setOutlineColor(sf::Color::White);
+    windowedButton.setOutlineThickness(2.0f * scale);
+    windowedButton.setPosition(sf::Vector2f(leftButtonX, currentY - (buttonHeight / 2.0f)));
+
+    // Only draw if within strict visible area bounds
+    if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
+        window.draw(windowedButton);
+        
+        // Windowed Button Text
+        sf::Text windowedText{ edges };
+        windowedText.setString("Windowed");
+        windowedText.setFillColor(sf::Color::White);
+        windowedText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale * 0.8f));
+        const sf::FloatRect wtb = windowedText.getLocalBounds();
+        windowedText.setOrigin(wtb.position + wtb.size / 2.0f);
+        windowedText.setPosition(sf::Vector2f(windowedButton.getPosition().x + windowedButton.getSize().x / 2.0f, windowedButton.getPosition().y + windowedButton.getSize().y / 2.0f));
+        window.draw(windowedText);
+    }
+
+    // Fullscreen Button
+    sf::RectangleShape& fullscreenButton = ui.getFullscreenButton();
+    fullscreenButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    // Highlight current mode
+    if (windowObj.isFullscreen) {
+        fullscreenButton.setFillColor(sf::Color(0, 150, 0)); // Green for active
+    } else {
+        fullscreenButton.setFillColor(sf::Color(100, 100, 100)); // Gray for inactive
+    }
+    fullscreenButton.setOutlineColor(sf::Color::White);
+    fullscreenButton.setOutlineThickness(2.0f * scale);
+    fullscreenButton.setPosition(sf::Vector2f(rightButtonX, currentY - (buttonHeight / 2.0f)));
+
+    // Only draw if within strict visible area bounds
+    if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
+        window.draw(fullscreenButton);
+        
+        // Fullscreen Button Text
+        sf::Text fullscreenText{ edges };
+        fullscreenText.setString("Fullscreen");
+        fullscreenText.setFillColor(sf::Color::White);
+        fullscreenText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale * 0.8f));
+        const sf::FloatRect ftb = fullscreenText.getLocalBounds();
+        fullscreenText.setOrigin(ftb.position + ftb.size / 2.0f);
+        fullscreenText.setPosition(sf::Vector2f(fullscreenButton.getPosition().x + fullscreenButton.getSize().x / 2.0f, fullscreenButton.getPosition().y + fullscreenButton.getSize().y / 2.0f));
+        window.draw(fullscreenText);
+    }
+
     currentY += baseLargeSpacing * scale; // Scale spacing between elements
 
 	sf::Text graphicsSettingsText{ edges };
@@ -362,25 +443,6 @@ void UI::GenerateSettingsMenu(sf::RenderWindow& window, UI& ui, const Window& wi
 		window.draw(UtilitiesSettingsText);
 	}
 	currentY += baseLargeSpacing * scale; // Scale spacing between elements
-
-
-
-    // Add more content to test scrolling
-    for (int i = 0; i < 10; ++i) {
-        sf::Text testText{ ui.edges };
-        testText.setString("Test Option " + std::to_string(i + 1));
-        testText.setFillColor(sf::Color::White);
-        testText.setCharacterSize(static_cast<unsigned int>(baseSmallFontSize * scale)); // Scale test text font
-        const sf::FloatRect ttb = testText.getLocalBounds();
-        testText.setOrigin(ttb.position + ttb.size / 2.0f);
-        testText.setPosition(sf::Vector2f(midX, currentY));
-        
-        // Only draw if within strict visible area bounds
-        if (currentY >= contentVisibleTop && currentY <= contentVisibleBottom) {
-            window.draw(testText);
-        }
-        currentY += baseSpacing * scale; // Scale spacing between elements
-    }
 }
 
 void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& windowObj) {

@@ -19,7 +19,7 @@ using namespace std;
 
         //WINDOW GENERATION (my window class, not sfml)
 		Window window;
-		window.WindowGeneration(60, 16, 0); // Frame rate, antialiasing level, and state (0 for windowed, 1 for fullscreen)
+		window.WindowGeneration(0); // default state (0 for windowed, 1 for fullscreen)
 
         //INITIALIZE BUTTONS (USING UI CLASS)
         UI ui;
@@ -74,7 +74,7 @@ using namespace std;
             }
         }
 	        
-		ui.DrawUI(window.window, dt, ui, window); // Draws and animates UI elements - now passing the window object
+		ui.DrawUI(window.window, dt, ui, window); // Draws and animates UI elements
 
 		window.window.display(); //Displays all the drawn shapes and text
 

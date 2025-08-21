@@ -5,7 +5,7 @@ using namespace std;
 Events::Events() {}
 
 void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton, const Window& windowObj) {
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -48,6 +48,22 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                 // Only check settings rectangle collision if the menu is open
                 if (ui.settingsMenuOpen && settings.getGlobalBounds().contains(mousePos)) {
                     clickedOnUI = true;
+                }
+
+                // Check for window mode button clicks when settings menu is open
+                if (ui.settingsMenuOpen) {
+                    if (ui.getWindowedButton().getGlobalBounds().contains(mousePos)) {
+                        if (windowObj.isFullscreen) {
+                            windowObj.toggleFullscreen();
+                        }
+                        clickedOnUI = true;
+                    }
+                    else if (ui.getFullscreenButton().getGlobalBounds().contains(mousePos)) {
+                        if (!windowObj.isFullscreen) {
+                            windowObj.toggleFullscreen();
+                        }
+                        clickedOnUI = true;
+                    }
                 }
 
                 // Only create aircraft if settings menu is NOT open

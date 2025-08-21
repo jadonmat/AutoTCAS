@@ -3,9 +3,12 @@
 #include <algorithm>
 using namespace std;
 
-Window::Window() {}
+Window::Window() {
+    framerate = 60;
+	antialiasing = 16;
+}
 
-void Window::WindowGeneration(int framerate, int antialiasing, int state) {
+void Window::WindowGeneration(int state) {
     // Display the list of all the video modes available for fullscreen
     std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
     for (std::size_t i = 0; i < modes.size(); ++i)
@@ -38,6 +41,25 @@ void Window::WindowGeneration(int framerate, int antialiasing, int state) {
 
 std::string Window::getCurrentWindowModeString() const {
     return isFullscreen ? "Fullscreen" : "Windowed";
+}
+
+void Window::toggleFullscreen() {
+    sf::VideoMode CurrentDesktopMode = sf::VideoMode::getDesktopMode();
+    sf::ContextSettings settings;
+    settings.antiAliasingLevel = antialiasing;
+    
+    if (isFullscreen) {
+        // Switch to windowed mode
+        window.create(sf::VideoMode({ 1250, 750 }), "AutoTCAS", sf::Style::Default, sf::State::Windowed, settings);
+        isFullscreen = false;
+    } else {
+        // Switch to fullscreen mode
+        window.create(CurrentDesktopMode, "AutoTCAS", sf::Style::Default, sf::State::Fullscreen, settings);
+        isFullscreen = true;
+    }
+    
+    // Restore framerate limit
+    window.setFramerateLimit(framerate);
 }
 
 void Window::MinimumSize() {

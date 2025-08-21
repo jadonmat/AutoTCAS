@@ -23,7 +23,9 @@ public:
 
     sf::Text& getResetButton(); // needed for events
 
-
+    // Window mode button getters
+    sf::RectangleShape& getWindowedButton();
+    sf::RectangleShape& getFullscreenButton();
 
     void GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt);
 
@@ -48,6 +50,9 @@ public:
 	sf::RectangleShape settings; // needed in events
 	sf::RectangleShape exitButton; // needed in events
 
+    // Window mode buttons
+    sf::RectangleShape windowedButton; // needed in events
+    sf::RectangleShape fullscreenButton; // needed in events
 
     sf::Text reset{ edges }; // Needed in events
 

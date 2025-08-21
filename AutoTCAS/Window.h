@@ -5,11 +5,14 @@ class Window {
 public:
 	Window();
 
-	void WindowGeneration(int FrameRate, int antialiasing, int state);
+	void WindowGeneration(int state);
 	void MinimumSize();
 	
 	// Method to get current window mode as string
 	std::string getCurrentWindowModeString() const;
+	
+	// Method to toggle between fullscreen and windowed mode
+	void toggleFullscreen();
 
 	// Add minimum size constants
 	static constexpr unsigned int MIN_WIDTH = 800;
@@ -18,4 +21,8 @@ public:
 	// public member variables (needs to be accessed in main)
 	bool isFullscreen = false;
 	sf::RenderWindow window;
+
+private:
+	int framerate;
+	int antialiasing;
 };
