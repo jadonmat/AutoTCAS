@@ -15,6 +15,8 @@ public:
 
     sf::Font getpixellariFont() const;
 
+    sf::Font getarialFont() const;
+
 	sf::CircleShape& getSettingsIconCircle(); // needed for events
 
 	sf::RectangleShape& getSettingsIconTooth(); // needed for events
@@ -23,7 +25,11 @@ public:
 
 	sf::RectangleShape& getExitButton(); // needed for events
 
-    sf::Text& getResetButton(); // needed for events
+    sf::CircleShape& getResetIconCircle(); // needed for events
+
+	sf::ConvexShape& getResetIconArrow(); // needed for events
+
+	sf::RectangleShape& getResetIconRectangle(); // needed for events
 
     // Window mode button getters
     sf::RectangleShape& getWindowedButton();
@@ -43,6 +49,7 @@ public:
     //Fonts
 	sf::Font edges; // needed in events
     sf::Font pixellari;
+	sf::Font arial;
 
 
 	bool showClickMessage; // needed in events
@@ -53,12 +60,13 @@ public:
     sf::RectangleShape settingsIconTooth; // needed in events
 	sf::RectangleShape settings; // needed in events
 	sf::RectangleShape exitButton; // needed in events
+	sf::CircleShape resetIconCircle; // needed in events
+	sf::ConvexShape resetIconArrow; // needed in events
+    sf::RectangleShape resetIconRectangle; // needed in events
 
     // Window mode buttons
     sf::RectangleShape windowedButton; // needed in events
     sf::RectangleShape fullscreenButton; // needed in events
-
-    sf::Text reset{ edges }; // Needed in events
 
     // needed in events (move to events?)
     std::vector<sf::Text> tooCloseTexts;
@@ -72,7 +80,7 @@ public:
 
     // Scale constants
     static constexpr float MIN_SCALE = 0.4f;
-    static constexpr float MAX_SCALE = 1.5f;
+    static constexpr float MAX_SCALE = .7f;
 	static constexpr float MAX_SCALE_FPS = 0.85f;
 	static constexpr float MAX_SCALE_SETTINGS = 0.5f; // For settings menu scaling
     static constexpr float MIN_SETTINGS_WIDTH = 400.0f;  // Minimum settings menu width

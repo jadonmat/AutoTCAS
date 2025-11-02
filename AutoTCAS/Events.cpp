@@ -5,7 +5,7 @@ using namespace std;
 Events::Events() {}
 
 void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::CircleShape& settingsIconCircle, sf::RectangleShape& settingsIconTooth, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj) {
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::CircleShape& resetIconCircle, sf::CircleShape& settingsIconCircle, sf::RectangleShape& settingsIconTooth, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -42,7 +42,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                 // Check if click is on UI buttons (settings or reset)
                 // Only check settings bounds if menu is actually open
                 bool clickedOnUI = false;
-                if (reset.getGlobalBounds().contains(mousePos) || settingsIconCircle.getGlobalBounds().contains(mousePos)) {
+                if (resetIconCircle.getGlobalBounds().contains(mousePos) || settingsIconCircle.getGlobalBounds().contains(mousePos)) {
                     clickedOnUI = true;
                 }
                 // Only check settings rectangle collision if the menu is open
@@ -96,7 +96,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
 
             }
             // RESET BUTTON
-            if (reset.getGlobalBounds().contains(mousePos)) {
+            if (resetIconCircle.getGlobalBounds().contains(mousePos) && !ui.settingsMenuOpen) {
                 //std::cout << "the left button was pressed" << std::endl;
                 aircrafts.clear();
                 aircraftShapes.clear();

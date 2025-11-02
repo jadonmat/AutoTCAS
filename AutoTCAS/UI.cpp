@@ -1,4 +1,4 @@
-//Seperate class, not related to the aircraft inherentence structure.
+﻿//Seperate class, not related to the aircraft inherentence structure.
 #include <iostream>
 #include <vector>
 #include "UI.h"
@@ -27,6 +27,7 @@ UI::UI() {
     resetButtonPressed = false;
     edges = getedgesFont();
     pixellari = getpixellariFont();
+    arial = getarialFont();
 }
 
 
@@ -38,6 +39,11 @@ sf::Font UI::getedgesFont() const {
 sf::Font UI::getpixellariFont() const {
 	sf::Font pixellariFont("Fonts/Pixellari.ttf");
 	return pixellariFont;
+}
+
+sf::Font UI::getarialFont() const {
+    sf::Font InterFont("Fonts/Inter_18pt-ExtraBold.ttf");
+	return InterFont;
 }
 
 sf::CircleShape& UI::getSettingsIconCircle() {
@@ -57,9 +63,18 @@ sf::RectangleShape& UI::getExitButton() {
     return exitButton; 
 }
 
-sf::Text& UI::getResetButton() {
-    return reset; 
+sf::CircleShape& UI::getResetIconCircle() {
+    return resetIconCircle;
 }
+
+sf::ConvexShape& UI::getResetIconArrow() {
+    return resetIconArrow;
+}
+
+sf::RectangleShape& UI::getResetIconRectangle() {
+	return resetIconRectangle;
+}
+
 
 sf::RectangleShape& UI::getWindowedButton() {
     return windowedButton;
@@ -482,11 +497,11 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
         // Calculate gear properties
         float localscale = .75f;
         float gearRadius = CharacterSize * 0.6f * localscale;
-        float toothWidth = CharacterSize * 1.2f * localscale;
+        float toothWidth = CharacterSize * .25f * localscale;
         float toothLength = CharacterSize * 0.275f * localscale;
         
         // Position for the gear (center point)
-        float gearCenterX = static_cast<float>(window.getSize().x) - gearRadius * 1.5f - resetdiff;
+        float gearCenterX = static_cast<float>(window.getSize().x) - 10.f * 1.5f - resetdiff;
         float gearCenterY = 20.0f * scale + gearRadius;
         
         // Draw gear teeth first (so circle draws on top)
@@ -496,7 +511,7 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
         //settingsIconTooth.setOutlineThickness(CharacterSize * 0.05f);
         settingsIconTooth.setSize(sf::Vector2f(toothWidth, toothLength));
         // Set origin to center of the tooth for proper rotation
-        settingsIconTooth.setOrigin(sf::Vector2f(toothWidth / 2.0f, toothLength / 2.0f));
+        settingsIconTooth.setOrigin(sf::Vector2f(toothWidth + CharacterSize * .4f , toothLength / 2.0f));
         
         // Draw 8 teeth around the circle
         for (int i = 0; i < 8; ++i) {
@@ -514,8 +529,8 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
         
         // Draw gear circle
         sf::CircleShape& settingsIconCircle = ui.getSettingsIconCircle();
-        settingsIconCircle.setRadius(gearRadius * 0.5f); // Inner circle is smaller
-        settingsIconCircle.setFillColor(sf::Color::Black);
+        settingsIconCircle.setRadius(gearRadius * 0.6f); // Inner circle is smaller
+        settingsIconCircle.setFillColor(sf::Color::Transparent);
         settingsIconCircle.setOutlineColor(sf::Color::White);
         settingsIconCircle.setOutlineThickness(CharacterSize * 0.2f * localscale);
         
@@ -534,29 +549,65 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
 
     // RESET BUTTON
     if (!ui.showClickMessage) {
-        sf::Text& reset = ui.getResetButton();
-        reset.setFont(edges);
-        reset.setString("RESET");
-        reset.setFillColor(sf::Color::White);
-        reset.setCharacterSize(static_cast<unsigned int>(CharacterSize));
-        sf::FloatRect bounds = reset.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        reset.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 150.0f * scale));
-        window.draw(reset);
+        float localscale = .75f;
+        float iconRadius = CharacterSize * 0.4f * localscale;
+
+        // Calculate position for reset icon (to the left of the gear icon)
+        float resetIconCenterX =static_cast<float>(window.getSize().x) - 10.f * 1.5f - resetdiff; // Position to the left of gear
+        float resetIconCenterY = 100.0f * scale + iconRadius;
+
+        
+
+
+
+        sf::CircleShape& resetIconCircle = ui.getResetIconCircle();
+        resetIconCircle.setRadius(iconRadius);
+        resetIconCircle.setFillColor(sf::Color::Transparent);
+        resetIconCircle.setOutlineColor(sf::Color::White);
+        resetIconCircle.setOutlineThickness(CharacterSize * 0.15f * localscale);
+        resetIconCircle.setOrigin(sf::Vector2f(resetIconCircle.getRadius(), resetIconCircle.getRadius()));
+        resetIconCircle.setPosition(sf::Vector2f(resetIconCenterX, resetIconCenterY));
+        window.draw(resetIconCircle);
+
+		sf::RectangleShape& resetIconRectangle = ui.getResetIconRectangle();
+		resetIconRectangle.setFillColor(sf::Color::Black);
+		resetIconRectangle.setSize(sf::Vector2f(CharacterSize * .8f, CharacterSize * .5f));
+		resetIconRectangle.setOrigin(sf::Vector2f(resetIconCircle.getRadius() * .6f, resetIconCircle.getRadius() * .5f));
+        resetIconRectangle.setPosition(sf::Vector2f(resetIconCenterX + iconRadius * .5f, resetIconCenterY + iconRadius * .5f));
+		//window.draw(resetIconRectangle);
+
+        sf::ConvexShape& resetIconArrow = ui.getResetIconArrow();
+        resetIconArrow.setPointCount(3);
+        float arrowscale = .6f;
+        resetIconArrow.setPoint(0, sf::Vector2f(0 * localscale * arrowscale * CharacterSize, 0 * localscale * arrowscale * CharacterSize));
+        resetIconArrow.setPoint(1, sf::Vector2f(0.5 * localscale * arrowscale * CharacterSize, -1 * localscale * arrowscale * CharacterSize));
+        resetIconArrow.setPoint(2, sf::Vector2f(-0.5 * localscale * arrowscale * CharacterSize, -1 * localscale * arrowscale * CharacterSize));
+        resetIconArrow.setFillColor(sf::Color::White);
+        resetIconArrow.setPosition(sf::Vector2f(resetIconCenterX - iconRadius + 2.9f, resetIconCenterY - iconRadius - 2.0f));
+        resetIconArrow.setRotation(sf::degrees(200.0f));
+        window.draw(resetIconArrow);
+
+        //sf::Text resetSymbol{ arial };
+        //resetSymbol.setString("Reset:↻");
+        //resetSymbol.setFillColor(sf::Color::White);
+        //resetSymbol.setCharacterSize(static_cast<unsigned int>(CharacterSize * 1.2f * localscale));
+        //resetSymbol.setPosition(sf::Vector2f(resetIconCenterX - 500.f, resetIconCenterY));
+        //window.draw(resetSymbol);
+
 
         // Start the reset text timer when button is pressed
         if (ui.resetButtonPressed) {
             ui.showResetText = true;
             ui.resetTextTimer = 0.0f;
-            ui.resetButtonPressed = false; // Reset the button state immediately
+            ui.resetButtonPressed = false;
         }
 
-        // Update and display reset text if active
+        // Update and display aircraft deleted text if active
         if (ui.showResetText) {
             ui.resetTextTimer += dt.asSeconds();
 
             if (ui.resetTextTimer >= ui.resetTextDuration) {
-                ui.showResetText = false; // Hide the text after duration
+                ui.showResetText = false;
             }
             else {
                 sf::Text resetText{ edges };
