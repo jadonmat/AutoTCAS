@@ -15,7 +15,9 @@ public:
 
     sf::Font getpixellariFont() const;
 
-	sf::Text& getSettingsText(); // needed for events
+	sf::CircleShape& getSettingsIconCircle(); // needed for events
+
+	sf::RectangleShape& getSettingsIconTooth(); // needed for events
 
 	sf::RectangleShape& getSettings(); // needed for events
 
@@ -46,7 +48,9 @@ public:
 	bool showClickMessage; // needed in events
 	bool settingsMenuOpen; // needed in events
 	bool resetButtonPressed;// needed in events
-	sf::Text settingsText{ edges }; // needed in events
+
+    sf::CircleShape settingsIconCircle; //needed in events
+    sf::RectangleShape settingsIconTooth; // needed in events
 	sf::RectangleShape settings; // needed in events
 	sf::RectangleShape exitButton; // needed in events
 

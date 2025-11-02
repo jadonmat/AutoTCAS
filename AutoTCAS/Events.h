@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "Aircraft.h"
 #include "A380.h"
 #include "UI.h"
 #include "Window.h"
@@ -11,6 +10,6 @@ public:
 	Events();
 
 	void handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-		std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj);
+		std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::CircleShape& settingsIconCircle, sf::RectangleShape& settingsIconTooth, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj);
 
 };

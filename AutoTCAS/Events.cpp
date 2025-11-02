@@ -5,7 +5,7 @@ using namespace std;
 Events::Events() {}
 
 void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& aircrafts,
-    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::Text& settingsText, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj) {
+    std::vector<std::vector<sf::ConvexShape>>& aircraftShapes, UI& ui, sf::Text& reset, sf::CircleShape& settingsIconCircle, sf::RectangleShape& settingsIconTooth, sf::RectangleShape& settings, sf::RectangleShape& exitButton, Window& windowObj) {
 
     // EVENT LOOPS
     while (const std::optional event = window.pollEvent()) {
@@ -42,7 +42,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
                 // Check if click is on UI buttons (settings or reset)
                 // Only check settings bounds if menu is actually open
                 bool clickedOnUI = false;
-                if (reset.getGlobalBounds().contains(mousePos) || settingsText.getGlobalBounds().contains(mousePos)) {
+                if (reset.getGlobalBounds().contains(mousePos) || settingsIconCircle.getGlobalBounds().contains(mousePos)) {
                     clickedOnUI = true;
                 }
                 // Only check settings rectangle collision if the menu is open
@@ -106,7 +106,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
             }
 
             // SETTINGS BUTTON
-            if (settingsText.getGlobalBounds().contains(mousePos)) {
+            if (settingsIconCircle.getGlobalBounds().contains(mousePos) && settingsIconTooth.getGlobalBounds().contains(mousePos)) {
                 if (!ui.settingsMenuOpen) {
                     ui.GenerateSettingsMenu(window, ui, windowObj);
                     ui.settingsMenuOpen = true;

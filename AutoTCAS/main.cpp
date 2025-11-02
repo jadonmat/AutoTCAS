@@ -41,7 +41,7 @@ using namespace std;
 
         Events Events;
 		// Handle events in event class
-		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui, ui.reset, ui.settingsText, ui.settings, ui.exitButton, window);
+		Events.handleEvents(window.window, aircrafts, aircraftShapes, ui, ui.reset, ui.settingsIconCircle, ui.settingsIconTooth, ui.settings, ui.exitButton, window);
 
 
         // Only update simulation if settings menu is not open (PAUSE FUNCTIONALITY)
@@ -78,7 +78,7 @@ using namespace std;
 
 		window.window.display(); //Displays all the drawn shapes and text
 
-        } 
+        }
         // END MAIN
         return 0;
     }

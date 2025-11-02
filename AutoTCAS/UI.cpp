@@ -40,9 +40,14 @@ sf::Font UI::getpixellariFont() const {
 	return pixellariFont;
 }
 
-sf::Text& UI::getSettingsText() {
-    return settingsText;
+sf::CircleShape& UI::getSettingsIconCircle() {
+    return settingsIconCircle;
 }
+
+sf::RectangleShape& UI::getSettingsIconTooth() {
+    return settingsIconTooth;
+}
+
 
 sf::RectangleShape& UI::getSettings() {
     return settings; 
@@ -468,21 +473,59 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
     float CharacterSize = baseCharacterSize * scale;
     float CharacterSizeFPS = baseFPSSize * scale_fps;
     float TooCloseCharacterSize = baseTooCloseSize; //* scale;
-    
-    float resetdiff = 10.0f * scale; // Scale the offset too
-    
 
-    //SETTINGS
-    if(!ui.showClickMessage) {
-        sf::Text& settingstext = ui.getSettingsText();
-        settingstext.setString("SETTINGS");
-        settingstext.setFillColor(sf::Color::White);
-        settingstext.setCharacterSize(static_cast<unsigned int>(CharacterSize));
-        sf::FloatRect bounds = settingstext.getLocalBounds();
-        sf::Vector2f center = bounds.getCenter();
-        settingstext.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 5.0f * scale));
-        window.draw(settingsText);
-	}
+    float resetdiff = 10.0f * scale; // Scale the offset too
+
+
+    //SETTINGS GEAR ICON
+    if (!ui.showClickMessage) {
+        // Calculate gear properties
+        float localscale = .75f;
+        float gearRadius = CharacterSize * 0.6f * localscale;
+        float toothWidth = CharacterSize * 1.2f * localscale;
+        float toothLength = CharacterSize * 0.275f * localscale;
+        
+        // Position for the gear (center point)
+        float gearCenterX = static_cast<float>(window.getSize().x) - gearRadius * 1.5f - resetdiff;
+        float gearCenterY = 20.0f * scale + gearRadius;
+        
+        // Draw gear teeth first (so circle draws on top)
+        sf::RectangleShape& settingsIconTooth = ui.getSettingsIconTooth();
+        settingsIconTooth.setFillColor(sf::Color::White);
+        //settingsIconTooth.setOutlineColor(sf::Color::White);
+        //settingsIconTooth.setOutlineThickness(CharacterSize * 0.05f);
+        settingsIconTooth.setSize(sf::Vector2f(toothWidth, toothLength));
+        // Set origin to center of the tooth for proper rotation
+        settingsIconTooth.setOrigin(sf::Vector2f(toothWidth / 2.0f, toothLength / 2.0f));
+        
+        // Draw 8 teeth around the circle
+        for (int i = 0; i < 8; ++i) {
+            sf::Angle angle = i * sf::degrees(45.0f); // 360/8 = 45 degrees
+            settingsIconTooth.setRotation(angle);
+            
+            // Calculate tooth position on the circle's edge
+            float angleRad = angle.asRadians();
+            float toothX = gearCenterX + std::cos(angleRad);
+            float toothY = gearCenterY + std::sin(angleRad);
+            
+            settingsIconTooth.setPosition(sf::Vector2f(toothX, toothY));
+            window.draw(settingsIconTooth);
+        }
+        
+        // Draw gear circle
+        sf::CircleShape& settingsIconCircle = ui.getSettingsIconCircle();
+        settingsIconCircle.setRadius(gearRadius * 0.5f); // Inner circle is smaller
+        settingsIconCircle.setFillColor(sf::Color::Black);
+        settingsIconCircle.setOutlineColor(sf::Color::White);
+        settingsIconCircle.setOutlineThickness(CharacterSize * 0.2f * localscale);
+        
+        // Set origin to center of circle for easier positioning
+        settingsIconCircle.setOrigin(sf::Vector2f(settingsIconCircle.getRadius(), settingsIconCircle.getRadius()));
+        settingsIconCircle.setPosition(sf::Vector2f(gearCenterX, gearCenterY));
+        
+        window.draw(settingsIconCircle);
+    }
+    
     // Draw settings menu only if open
     if (ui.settingsMenuOpen) {
         ui.GenerateSettingsMenu(window, ui, windowObj);
@@ -498,7 +541,7 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
         reset.setCharacterSize(static_cast<unsigned int>(CharacterSize));
         sf::FloatRect bounds = reset.getLocalBounds();
         sf::Vector2f center = bounds.getCenter();
-        reset.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 70.0f * scale));
+        reset.setPosition(sf::Vector2f(static_cast<float>(window.getSize().x) - center.x * 2.0f - resetdiff, 150.0f * scale));
         window.draw(reset);
 
         // Start the reset text timer when button is pressed
@@ -529,17 +572,17 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
     }
 
 
-	// FPS DISPLAY
+    // FPS DISPLAY
     if (!ui.showClickMessage) {
-		GenerateFPS(window, ui, dt);
+        GenerateFPS(window, ui, dt);
     }
 
 
-	//INTRO
+    //INTRO
     if (showClickMessage) {
-		GenerateIntro(window, ui, dt);
+        GenerateIntro(window, ui, dt);
     }
-   
+
 
     //TOO CLOSE MESSAGES
     // update all active tooclosetexts using vectors
@@ -564,7 +607,7 @@ void UI::DrawUI(sf::RenderWindow& window, sf::Time dt, UI& ui, const Window& win
         sf::FloatRect bounds = tooCloseTexts[i].getLocalBounds();
         sf::Vector2f centerClose = bounds.getCenter();
         tooCloseTexts[i].setPosition(sf::Vector2f(tooClosePositions[i].x - centerClose.x, tooClosePositions[i].y - centerClose.y));
-        
+
         window.draw(tooCloseTexts[i]);
     }
 }
