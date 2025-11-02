@@ -116,12 +116,13 @@ If you encounter linking issues:
 - ~~**v1.2.0** - Basic settings menu, intro screen, spawn too close notification, auto scale UI, reset notification.~~
 - **v1.3.0** - TCAS audio, right click to delete aircraft, hover to view aircraft info.
 - **v1.4.0** - Zoom and pan ability with larger map (circular boundary). Max # of aircraft.
-- **v1.5.0** - Animated ailerons, aircraft collisions
-- **v1.6.0** - New types of aircraft, aircraft names.
-- **v1.7.0** - Overhauled intro screen, overhauled UI system, program thumbnail. LIkely to implement a UI library.
-- **v1.8.0** - Advanced predictive avoidance handling with speed changes, engine animations.
-- **v1.9.0** - Ability to select aircraft starting heading.
-- **v2.0.0** - To be determined
+- **v1.5.0** - Complete simulation physics overhaul (ideal cruise scenario with no disturbances) with aircraft flight perfomance based off of its aerodynamic and propulsive properties. New physics will be scaled to the map realistically with distances in nm.
+#### Rough outline
+- **v1.6.0** -  Introduction of equations of motion to better model 2d rotational dynamics. Advanced predictive avoidance handling.
+- **v1.7.0** -
+- **v1.8.0** - Addition of wind (system disturbance) with control system implementation for lateral static stabilization. Introduces rudder component to system.
+- **v1.9.0** - Manual speed changes, initial heading selction, aircraft collisions, aircraft stall (low speeds).
+- **v2.0.0** - Animated ailerons and rudders, aircraft collisions, engine animations, new types of aircraft, aircraft names on hover, program thumbnail, overhauled intro screen, overhauled UI system. Likely to implement a UI library.
 
 ## 🤝 Contributing
 
