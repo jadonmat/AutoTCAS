@@ -2,7 +2,7 @@
 
 # ✈️ AutoTCAS - Traffic Collision Avoidance System Simulator
 
-![Release Version](https://img.shields.io/badge/Release_Version-1.2.0-blue.svg)
+![Release Version](https://img.shields.io/badge/Release_Version-1.2.1-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%2B-lightgrey.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-x64-green.svg)
 ![Language](https://img.shields.io/badge/C%2B%2B-17-00599C.svg?logo=c%2B%2B)
