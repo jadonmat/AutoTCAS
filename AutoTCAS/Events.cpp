@@ -106,7 +106,7 @@ void Events::handleEvents(sf::RenderWindow& window, std::vector<Aircraft*>& airc
             }
 
             // SETTINGS BUTTON
-            if (settingsIconCircle.getGlobalBounds().contains(mousePos) && settingsIconTooth.getGlobalBounds().contains(mousePos)) {
+            if (settingsIconCircle.getGlobalBounds().contains(mousePos) || settingsIconTooth.getGlobalBounds().contains(mousePos)) {
                 if (!ui.settingsMenuOpen) {
                     ui.GenerateSettingsMenu(window, ui, windowObj);
                     ui.settingsMenuOpen = true;
