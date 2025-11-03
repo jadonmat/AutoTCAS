@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-//#include "Aircraft.h"
+#include "A380.h"
 class Window; // Forward declaration
 using namespace std;
 
@@ -112,4 +112,7 @@ private:
     int dotCount;
 
     std::string currentFPSString;
+
+    std::unique_ptr<A380> introAircraft;
+    std::vector<sf::ConvexShape> introAircraftShapes;
 };

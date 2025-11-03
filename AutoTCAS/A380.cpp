@@ -80,7 +80,7 @@ std::vector<sf::ConvexShape> A380::createAircraftShape(float scale) {
 		tailoval.setPoint(i, sf::Vector2f(x, y));
 	}
 	// right wing
-	rightwing.setPoint(0, sf::Vector2f(0.0f, 32.5f));
+	rightwing.setPoint(0, sf::Vector2f(5.0f, 32.5f));
 	rightwing.setPoint(1, sf::Vector2f(65.0f, 81.0f));
 	rightwing.setPoint(2, sf::Vector2f(65.5f, 81.5f));
 	rightwing.setPoint(3, sf::Vector2f(66.0f, 82.0f));

@@ -28,6 +28,9 @@ UI::UI() {
     edges = getedgesFont();
     pixellari = getpixellariFont();
     arial = getarialFont();
+
+    introAircraft = std::make_unique<A380>();
+    introAircraftShapes = introAircraft->createAircraftShape(5.0f);
 }
 
 
@@ -146,12 +149,19 @@ void UI::GenerateIntro(sf::RenderWindow& window, UI& ui, sf::Time dt) {
     sf::RectangleShape overlay(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     overlay.setFillColor(sf::Color(0, 0, 0, 128));
 
+    // Draw A380 in background (before overlay)(
+    if (ui.introAircraft) {
+        sf::Vector2f Position(static_cast<float>(window.getSize().x) / 2.0f, static_cast<float>(window.getSize().y) / 2.0f - 150.0f * scale);
+        ui.introAircraft->setPosition(Position);
 
-
+        for (auto& shape : ui.introAircraftShapes) {
+            shape.setPosition(Position);
+            window.draw(shape);
+        }
+    }
     window.draw(overlay);
     window.draw(clickText);
     window.draw(nameText);
-
 }
 
 void UI::GenerateFPS(sf::RenderWindow& window, UI& ui, sf::Time dt) {
